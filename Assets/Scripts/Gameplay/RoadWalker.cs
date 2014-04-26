@@ -22,8 +22,20 @@ class RoadWalker : MonoBehaviour
             return;
         }
 
-        distanceFromStart += 0.1f;
+        distanceFromStart += 0.1f * Speed;
 
-        transform.position = RoadToWalk.RoadCenterAt(distanceFromStart);
+        bool done;
+        var worldPos = RoadToWalk.RoadCenterAt(distanceFromStart, out done);
+
+        if (done)
+        {
+            // finished walking the path! change level?
+            // for now, wrap around
+            distanceFromStart = 0;
+            RoadToWalk.RoadCenterAt(distanceFromStart, out done);
+        }
+
+
+        transform.position = new Vector3(worldPos.x, 0, worldPos.z);
     }
 }

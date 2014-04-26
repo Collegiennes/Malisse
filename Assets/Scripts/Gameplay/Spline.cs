@@ -53,7 +53,7 @@ class Spline : MonoBehaviour
         }
     }
 
-    public Vector3 RoadCenterAt(float distanceFromStart)
+    public Vector3 RoadCenterAt(float distanceFromStart, out bool done)
     {
         var segments = Math.Round(CachedNodes.Length * 100 * SegmentRate);
 
@@ -73,12 +73,14 @@ class Spline : MonoBehaviour
             if (lengthSeen > distanceFromStart)
             {
                 float distanceAtLastSegment = lengthSeen - segmentLength;
+                done = false;
                 return transform.localToWorldMatrix * MathfPlus.PadVector3(Vector3.Lerp(center, nextCenter, (distanceFromStart - distanceAtLastSegment) / (lengthSeen - distanceAtLastSegment)));
             }
         }
 
         // fallback : at distance = 0
-        return RoadCenterAt(0);
+        done = true;
+        return Vector3.zero;
     }
 
     public float RoadTotalLength { get; private set; }
