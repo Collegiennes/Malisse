@@ -8,7 +8,7 @@ public class MainGameView : View
 	// constants
 	private const string HAND_PLAYER_PREFAB_PATH = "Prefabs/Hands/HandPlayer{0}";
 	private const string LEVEL_NAME = "Level{0}";
-	private const int NB_LEVELS = 1;
+	private const int NB_LEVELS = 2;
 
 	// enums
 	

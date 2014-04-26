@@ -19,12 +19,12 @@ class Malisse : MonoBehaviour
     {
         //Debug.Log(walker.CurrentTangent);
 
-        if (walker.CurrentTangent.z > 0 && sprite.clipId != sprite.GetClipIdByName("walk_rf"))
+        if (walker.CurrentDirection.x > 0 && sprite.clipId != sprite.GetClipIdByName("walk_rf"))
         {
             Debug.Log("right");
             sprite.Play("walk_rf");
         }
-        else if (walker.CurrentTangent.z < 0 && sprite.clipId != sprite.GetClipIdByName("walk_lf"))
+        else if (walker.CurrentDirection.x < 0 && sprite.clipId != sprite.GetClipIdByName("walk_lf"))
         {
             Debug.Log("left");
             sprite.Play("walk_lf");
