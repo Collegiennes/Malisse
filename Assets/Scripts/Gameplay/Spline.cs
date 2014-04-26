@@ -75,7 +75,6 @@ class Spline : MonoBehaviour
             {
                 float distanceAtLastSegment = lengthSeen - segmentLength;
                 done = false;
-                direction = (transform.localToWorldMatrix * direction).normalized;
                 return transform.localToWorldMatrix * MathfPlus.PadVector3(Vector3.Lerp(center, nextCenter, (distanceFromStart - distanceAtLastSegment) / (lengthSeen - distanceAtLastSegment)));
             }
         }
