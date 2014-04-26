@@ -87,7 +87,7 @@ public class Hand : MonoBehaviour
 		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, m_CurrentHeight);
 
 		// Look at.
-		transform.LookAt(-m_HandCamera.transform.position);
+		transform.rotation = m_HandCamera.transform.rotation;
 	}
 
 	private void OnTriggerEnter(Collider other) 
@@ -180,7 +180,6 @@ public class Hand : MonoBehaviour
 
 			yield return null;
 		}
-
 	}
 	#endregion
 }
