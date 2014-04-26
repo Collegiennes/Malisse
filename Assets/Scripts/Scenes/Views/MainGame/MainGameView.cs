@@ -8,7 +8,7 @@ public class MainGameView : View
 	// constants
 	private const string HAND_PLAYER_PREFAB_PATH = "Prefabs/Hands/HandPlayer{0}";
 	private const string LEVEL_NAME = "Level{0}";
-	private const int NB_LEVELS = 1;
+	private const int NB_LEVELS = 3;
 	private readonly Vector2 PLAYER_1_POSITION = new Vector2(-150.0f, 0.0f);
 	private readonly Vector2 PLAYER_2_POSITION = new Vector2(150.0f, 0.0f);
 
@@ -146,6 +146,9 @@ public class MainGameView : View
 			m_PreviousLevel = m_CurrentLevel;
 		}
 
+		yield return Resources.UnloadUnusedAssets();
+		System.GC.Collect();
+
 		// Load new level.
 		string levelName = string.Format(LEVEL_NAME, m_LevelIds[m_LevelIndex].ToString());
 		yield return Application.LoadLevelAdditiveAsync(levelName);
@@ -181,6 +184,12 @@ public class MainGameView : View
 
 	private void OnCameraMovementEnded()
 	{
+		// Destroy previous.
+		if (m_PreviousLevel != null)
+		{
+			Destroy(m_PreviousLevel.gameObject);
+		}
+
 		LoadHand(1, PLAYER_1_POSITION);
 		LoadHand(2, PLAYER_2_POSITION);
 		
