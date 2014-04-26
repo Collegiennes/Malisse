@@ -37,7 +37,7 @@ class RoadWalker : MonoBehaviour
         }
 
         transform.position = new Vector3(worldPos.x, 0, worldPos.z);
-        CurrentTangent = curTan;
+        CurrentTangent = curTan.normalized;
     }
 
     public Vector3 CurrentTangent { get; private set; }

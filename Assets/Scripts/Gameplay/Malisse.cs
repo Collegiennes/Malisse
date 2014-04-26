@@ -3,6 +3,7 @@
 class Malisse : MonoBehaviour
 {
     RoadWalker walker;
+    tk2dAnimatedSprite sprite;
 
     void Awake()
     {
@@ -11,10 +12,22 @@ class Malisse : MonoBehaviour
             transform.rotation = camGO.transform.rotation;
 
         walker = GetComponent<RoadWalker>();
+        sprite = GetComponent<tk2dAnimatedSprite>();
     }
 
     void Update()
     {
-        //walker.
+        //Debug.Log(walker.CurrentTangent);
+
+        if (walker.CurrentTangent.z > 0 && sprite.clipId != sprite.GetClipIdByName("walk_rf"))
+        {
+            Debug.Log("right");
+            sprite.Play("walk_rf");
+        }
+        else if (walker.CurrentTangent.z < 0 && sprite.clipId != sprite.GetClipIdByName("walk_lf"))
+        {
+            Debug.Log("left");
+            sprite.Play("walk_lf");
+        }
     }
 }
