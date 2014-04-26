@@ -136,6 +136,8 @@ public class Hand : MonoBehaviour
 
 	private IEnumerator RaiseHand()
 	{
+		yield return null;
+
 		float oldHeight = transform.localPosition.z;
 
 		float ratio = 0.0f;
