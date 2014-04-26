@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.0
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.technobeanie_stuff.CSharp.Editor", "UnityVS.technobeanie_stuff.CSharp.Editor.csproj", "{E7CBD9DD-1B82-8378-1206-EFB606AA7CB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.technobeanie_stuff.CSharp", "UnityVS.technobeanie_stuff.CSharp.csproj", "{C9F3E8A3-F128-5E08-43BB-A717383F897D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7CBD9DD-1B82-8378-1206-EFB606AA7CB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7CBD9DD-1B82-8378-1206-EFB606AA7CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7CBD9DD-1B82-8378-1206-EFB606AA7CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7CBD9DD-1B82-8378-1206-EFB606AA7CB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9F3E8A3-F128-5E08-43BB-A717383F897D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9F3E8A3-F128-5E08-43BB-A717383F897D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9F3E8A3-F128-5E08-43BB-A717383F897D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9F3E8A3-F128-5E08-43BB-A717383F897D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

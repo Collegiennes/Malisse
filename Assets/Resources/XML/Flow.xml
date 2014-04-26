@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- ********************************
+Flow (root):
+- viewDepth: optional (default: 100)
+- overlayOffset: optional (default: 1)
+- loadingMinDuration: optional (default: 0.5)
+
+Action (view action or global action):
+- name: obligatory.
+- viewId: obligatory (optional in a popup view to close itself)
+- popup: optional (default: false)
+- loading: optional (default: false)
+- overlay: optional (default: true)
+
+View:
+- id: obligatory.
+- name: obligatory (the name of the actual scene).
+
+Parameters (in action or view):
+- name: obligatory (the parameter key).
+- Tag Inner Text: obligatory.
+********************************* -->
+<flow viewDepth="100" overlayOffset="1" loadingMinDuration="0.5">
+	<!-- Global Actions -->
+	<action name="GO_TO_MAIN_GAME" viewId="TEST_SCENE"/>
+	
+	<!-- View -->
+	<view id="MAIN_GAME" name="MainGame">
+	</view>
+	
+	<view id="TEST_SCENE" name="TestScene">
+	</view>
+</flow>
