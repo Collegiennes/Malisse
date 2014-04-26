@@ -53,7 +53,7 @@ class Spline : MonoBehaviour
         }
     }
 
-    public Vector3 RoadCenterAt(float distanceFromStart, out bool done)
+    public Vector3 RoadCenterAt(float distanceFromStart, out bool done, out Vector3 direction)
     {
         var segments = Math.Round(CachedNodes.Length * 100 * SegmentRate);
 
@@ -66,6 +66,7 @@ class Spline : MonoBehaviour
 
             var center = MathfPlus.BSpline(nodePositions, s);
             Vector3 nextCenter = MathfPlus.BSpline(nodePositions, (i + 1) / (float)segments);
+            direction = nextCenter - center;
 
             var segmentLength = Vector3.Distance(nextCenter, center);
             lengthSeen += segmentLength;
@@ -80,6 +81,7 @@ class Spline : MonoBehaviour
 
         // fallback : at distance = 0
         done = true;
+        direction = Vector3.zero;
         return Vector3.zero;
     }
 

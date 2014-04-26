@@ -23,6 +23,7 @@ public class Hand : MonoBehaviour
 	// protected
 	
 	// private
+	private ObstacleHandle m_HoveringObstacleHandle = null;
 	private ObstacleHandle m_GrabbedObstacleHandle = null;
 	private HingeJoint m_GrabbedObstacleJoin = null;
 	private Camera m_HandCamera = null;
@@ -41,18 +42,42 @@ public class Hand : MonoBehaviour
 	private void FixedUpdate()
 	{
 		// Movements.
-		Vector2 movement = ControllerInputManager.Instance.GetLeftJoystick(m_ControllerId);
+		Vector2 movement = Vector2.zero;
+
+		Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
+		// Detect a controller.
+		if (movements.ContainsKey(m_ControllerId))
+		{
+			movement = movements[m_ControllerId];
+		}
+		// Mouse is player 1.
+		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+		         ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+		         movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
+		{
+			movement = movements[ControllerInputManager.Instance.MouseControllerId];
+		}
+
 		if (movement != Vector2.zero)
 		{
-			movement.x *= Time.deltaTime * SPEED.x;
-			movement.y *= Time.deltaTime * SPEED.y;
+			float weightFactor = 1.0f;
+			if (m_GrabbedObstacleJoin != null && m_GrabbedObstacleHandle != null)
+			{
+				weightFactor = m_GrabbedObstacleHandle.m_Obstacle.FullWeightFactor;
+			}
+
+			movement.x *= Time.deltaTime * SPEED.x * weightFactor;
+			movement.y *= Time.deltaTime * SPEED.y * weightFactor;
 
 			Vector3 newMovement = /*Quaternion.Euler(m_HandCamera.transform.eulerAngles) */ new Vector3(movement.x, 0.0f, movement.y);
 			transform.position += newMovement;
 		}
 
-		// Buttons.
-		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()))
+		// Buttons (controllers and mouse)
+		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
+		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+				 ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+				 ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
 		{
 			GrabObstacle();
 		}
@@ -65,26 +90,26 @@ public class Hand : MonoBehaviour
 		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, m_CurrentHeight);
 
 		// Look at.
-		transform.LookAt(-m_HandCamera.transform.position);
+		transform.rotation = m_HandCamera.transform.rotation;
 	}
 
 	private void OnTriggerEnter(Collider other) 
 	{
 		ObstacleHandle handle = other.GetComponent<ObstacleHandle>();
-		if (m_GrabbedObstacleHandle == null && handle != null)
+		if (m_HoveringObstacleHandle == null && handle != null)
 		{
 			m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandReadyAssetName);
-			m_GrabbedObstacleHandle = handle;
+			m_HoveringObstacleHandle = handle;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) 
 	{
 		ObstacleHandle handle = other.GetComponent<ObstacleHandle>();
-		if (handle != null && handle == m_GrabbedObstacleHandle)
+		if (handle != null && handle == m_HoveringObstacleHandle)
 		{
 			m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
-			m_GrabbedObstacleHandle = null;
+			m_HoveringObstacleHandle = null;
 		}
 	}
 	#endregion
@@ -100,7 +125,7 @@ public class Hand : MonoBehaviour
 	{
 		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandGrabbedAssetName);
 
-		if (m_GrabbedObstacleHandle != null && m_GrabbedObstacleJoin == null)
+		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
 			// Move hand.
 			m_GoalHeight = GRABBED_OFFSET;
@@ -108,13 +133,16 @@ public class Hand : MonoBehaviour
 			StartCoroutine("RaiseHand");
 
 			// Setup obstacle.
-			Vector3 newPosition = transform.position - (m_GrabbedObstacleHandle.transform.position - m_GrabbedObstacleHandle.m_Obstacle.transform.position);
-			newPosition.y = m_GrabbedObstacleHandle.m_Obstacle.transform.position.y;
-			m_GrabbedObstacleHandle.m_Obstacle.transform.position = newPosition;
+			Vector3 newPosition = transform.position - (m_HoveringObstacleHandle.transform.position - m_HoveringObstacleHandle.m_Obstacle.transform.position);
+			newPosition.y = m_HoveringObstacleHandle.m_Obstacle.transform.position.y;
+			m_HoveringObstacleHandle.m_Obstacle.transform.position = newPosition;
+
+			m_GrabbedObstacleHandle = m_HoveringObstacleHandle;
+			m_GrabbedObstacleHandle.OnGrabbed();
 
 			m_GrabbedObstacleJoin = gameObject.AddComponent<HingeJoint>();
-			m_GrabbedObstacleJoin.connectedBody = m_GrabbedObstacleHandle.m_Obstacle.rigidbody;
-			m_GrabbedObstacleJoin.anchor = m_GrabbedObstacleHandle.transform.localPosition;
+			m_GrabbedObstacleJoin.connectedBody = m_HoveringObstacleHandle.m_Obstacle.rigidbody;
+			m_GrabbedObstacleJoin.anchor = m_HoveringObstacleHandle.transform.localPosition;
 		}
 	}
 	
@@ -122,7 +150,11 @@ public class Hand : MonoBehaviour
 	{
 		if (m_GrabbedObstacleJoin != null)
 		{
+			m_GrabbedObstacleHandle.OnReleased();
+			m_GrabbedObstacleHandle = null;
+
 			Destroy(m_GrabbedObstacleJoin);
+			m_GrabbedObstacleJoin = null;
 			
 			yield return null;
 
@@ -151,7 +183,6 @@ public class Hand : MonoBehaviour
 
 			yield return null;
 		}
-
 	}
 	#endregion
 }

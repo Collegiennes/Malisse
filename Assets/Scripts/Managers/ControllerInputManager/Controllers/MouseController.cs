@@ -32,8 +32,8 @@ public class MouseController : BaseController
 	public override void SetKeyMapping()
 	{
 		// NOTE ppoirier: Maybe motion isn't appropriate for mouse movement.
-		AddAxisMap(eAxisId.MOTION_HORIZONTAL, "MouseX");
-		AddAxisMap(eAxisId.MOTION_VERTICAL, "MouseY");
+		AddAxisMap(eAxisId.LEFT_JOYSTICK_HORIZONTAL, "MouseX");
+		AddAxisMap(eAxisId.LEFT_JOYSTICK_VERTICAL, "MouseY");
 	}
 	
 	public override bool GetButton(BaseController.eButtonId buttonId)

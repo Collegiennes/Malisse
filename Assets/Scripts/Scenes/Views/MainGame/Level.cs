@@ -10,6 +10,7 @@ public class Level : MonoBehaviour
 	// enums
 	
 	// public
+	public Collider m_Bounds = null;
 	
 	// protected
 	
