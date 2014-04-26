@@ -8,3 +8,4 @@ Assembly-CSharp.csproj
 *.csproj
 *.DotSettings
 *.sln
+/obj/
