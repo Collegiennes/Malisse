@@ -33,7 +33,7 @@ public partial class ControllerInputManager
 	#region ControllerInputManager Implementation
 	partial void PostInputDetection()
 	{
-		//AddMouseController();
+		AddMouseController();
 
 		// Aliases.
 		SetAliases();

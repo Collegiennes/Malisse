@@ -51,7 +51,9 @@ public class Hand : MonoBehaviour
 			movement = movements[m_ControllerId];
 		}
 		// Mouse is player 1.
-		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
+		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+		         ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+		         movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
 		{
 			movement = movements[ControllerInputManager.Instance.MouseControllerId];
 		}
@@ -74,7 +76,8 @@ public class Hand : MonoBehaviour
 		// Buttons (controllers and mouse)
 		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
 		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
-		         ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
+				 ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+				 ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
 		{
 			GrabObstacle();
 		}
