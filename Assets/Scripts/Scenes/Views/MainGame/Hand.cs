@@ -122,7 +122,7 @@ public class Hand : MonoBehaviour
 	{
 		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandGrabbedAssetName);
 
-		if (m_HoveringObstacleHandle != null && m_GrabbedObstacleJoin == null)
+		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
 			// Move hand.
 			m_GoalHeight = GRABBED_OFFSET;

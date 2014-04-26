@@ -15,8 +15,13 @@ public class ObstacleHandle : Subject
 	// protected
 	
 	// private
+	private bool m_IsGrabbed = false;
 	
 	// properties
+	public bool IsGrabbed
+	{
+		get { return m_IsGrabbed; }
+	}
 	#endregion
 	
 	#region Unity API
@@ -32,12 +37,14 @@ public class ObstacleHandle : Subject
 	#region Public Methods
 	public void OnGrabbed()
 	{
-		NotifyObservers(true);
+		m_IsGrabbed = true;
+		NotifyObservers(m_IsGrabbed);
 	}
 
 	public void OnReleased()
 	{
-		NotifyObservers(false);
+		m_IsGrabbed = false;
+		NotifyObservers(m_IsGrabbed);
 	}
 	#endregion
 	
