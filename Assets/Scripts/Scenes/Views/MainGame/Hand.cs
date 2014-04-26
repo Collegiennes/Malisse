@@ -41,7 +41,20 @@ public class Hand : MonoBehaviour
 	private void FixedUpdate()
 	{
 		// Movements.
-		Vector2 movement = ControllerInputManager.Instance.GetLeftJoystick(m_ControllerId);
+		Vector2 movement = Vector2.zero;
+
+		Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
+		// Detect a controller.
+		if (movements.ContainsKey(m_ControllerId))
+		{
+			movement = movements[m_ControllerId];
+		}
+		// Mouse is player 1.
+		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
+		{
+			movement = movements[ControllerInputManager.Instance.MouseControllerId];
+		}
+
 		if (movement != Vector2.zero)
 		{
 			movement.x *= Time.deltaTime * SPEED.x;
@@ -51,8 +64,10 @@ public class Hand : MonoBehaviour
 			transform.position += newMovement;
 		}
 
-		// Buttons.
-		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()))
+		// Buttons (controllers and mouse)
+		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
+		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+		         ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
 		{
 			GrabObstacle();
 		}
