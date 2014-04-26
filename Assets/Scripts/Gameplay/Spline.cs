@@ -53,7 +53,7 @@ class Spline : MonoBehaviour
         }
     }
 
-    public Vector3 RoadCenterAt(float distanceFromStart, out bool done)
+    public Vector3 RoadCenterAt(float distanceFromStart, out bool done, out Vector3 tangent)
     {
         var segments = Math.Round(CachedNodes.Length * 100 * SegmentRate);
 
@@ -66,6 +66,7 @@ class Spline : MonoBehaviour
 
             var center = MathfPlus.BSpline(nodePositions, s);
             Vector3 nextCenter = MathfPlus.BSpline(nodePositions, (i + 1) / (float)segments);
+            tangent = Vector3.Cross(nextCenter - center, Vector3.up);
 
             var segmentLength = Vector3.Distance(nextCenter, center);
             lengthSeen += segmentLength;
@@ -74,12 +75,14 @@ class Spline : MonoBehaviour
             {
                 float distanceAtLastSegment = lengthSeen - segmentLength;
                 done = false;
+                tangent = transform.localToWorldMatrix * tangent;
                 return transform.localToWorldMatrix * MathfPlus.PadVector3(Vector3.Lerp(center, nextCenter, (distanceFromStart - distanceAtLastSegment) / (lengthSeen - distanceAtLastSegment)));
             }
         }
 
         // fallback : at distance = 0
         done = true;
+        tangent = Vector3.zero;
         return Vector3.zero;
     }
 
