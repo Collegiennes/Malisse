@@ -5,3 +5,6 @@ Assembly-CSharp-Editor.csproj
 Assembly-CSharp-vs.csproj
 Assembly-CSharp.csproj
 .DS_Store
+*.csproj
+*.DotSettings
+*.sln
