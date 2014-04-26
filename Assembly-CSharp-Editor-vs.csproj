@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{54337C1D-4EC1-E6D3-6404-57DEAB724CF8}</ProjectGuid>
+	<ProjectGuid>{C1962D95-0C9A-CD6A-CB24-16073B83FC65}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -108,9 +108,6 @@
  <Reference Include="SyntaxTree.VisualStudio.Unity.Messaging">
  <HintPath>Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Messaging.dll</HintPath>
  </Reference>
- <Reference Include="UnityVS.VersionSpecific">
- <HintPath>Assets\UnityVS\Editor\UnityVS.VersionSpecific.dll</HintPath>
- </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
  </Reference>
@@ -129,10 +126,13 @@
  <Reference Include="UnityEditor.Android.Extensions">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="UnityVS.VersionSpecific">
+ <HintPath>Assets\UnityVS\Editor\UnityVS.VersionSpecific.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-vs.csproj">
-      <Project>{BB4C2629-25EB-2664-BC81-B00BD08653E2}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
+      <Project>{1492C881-DAF0-081E-D633-B4C74D1B46DC}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
