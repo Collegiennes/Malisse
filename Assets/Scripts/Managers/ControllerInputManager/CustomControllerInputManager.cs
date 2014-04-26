@@ -18,8 +18,13 @@ public partial class ControllerInputManager
 	// protected
 	
 	// private
+	private eControllerId m_MouseControllerId = eControllerId.NONE;
 	
 	// properties
+	public eControllerId MouseControllerId
+	{
+		get { return m_MouseControllerId; }
+	}
 	#endregion
 	
 	#region Unity API
@@ -28,6 +33,8 @@ public partial class ControllerInputManager
 	#region ControllerInputManager Implementation
 	partial void PostInputDetection()
 	{
+		AddMouseController();
+
 		// Aliases.
 		SetAliases();
 	}
@@ -40,6 +47,12 @@ public partial class ControllerInputManager
 	#endregion
 	
 	#region Private Functions
+	private void AddMouseController()
+	{
+		MouseController controller = new MouseController();
+		m_MouseControllerId = ControllerInputManager.Instance.AddController(controller);
+	}
+
 	private void SetAliases()
 	{
 		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.A, eButtonAliases.GRAB.ToString());
