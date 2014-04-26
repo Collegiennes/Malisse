@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ObstacleHandle : MonoBehaviour 
+public class ObstacleHandle : Subject 
 {
 	#region Members and properties
 	// constants
@@ -20,9 +20,25 @@ public class ObstacleHandle : MonoBehaviour
 	#endregion
 	
 	#region Unity API
+	public void Awake()
+	{
+		if (m_Obstacle != null)
+		{
+			AddObserver(m_Obstacle);
+		}
+	}
 	#endregion
 	
 	#region Public Methods
+	public void OnGrabbed()
+	{
+		NotifyObservers(true);
+	}
+
+	public void OnReleased()
+	{
+		NotifyObservers(false);
+	}
 	#endregion
 	
 	#region Protected Methods

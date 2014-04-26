@@ -127,7 +127,7 @@ public class MainGameView : View
 		GameObject levelObj = GameObject.Find(levelName) as GameObject;
 		if (levelObj != null)
 		{
-			levelObj.transform.parent = transform;
+			levelObj.transform.parent = m_SceneAnchor;
 
 			m_CurrentLevel = levelObj.GetComponent<Level>();
 		}
