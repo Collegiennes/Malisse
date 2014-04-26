@@ -22,7 +22,7 @@ Parameters (in action or view):
 ********************************* -->
 <flow viewDepth="100" overlayOffset="1" loadingMinDuration="0.5">
 	<!-- Global Actions -->
-	<action name="GO_TO_MAIN_GAME" viewId="TEST_SCENE"/>
+	<action name="GO_TO_MAIN_GAME" viewId="SPLINE_TEST"/>
 	
 	<!-- View -->
 	<view id="MAIN_GAME" name="MainGame">
@@ -30,4 +30,7 @@ Parameters (in action or view):
 	
 	<view id="TEST_SCENE" name="TestScene">
 	</view>
+
+  <view id="SPLINE_TEST" name="SplineTest">
+  </view>
 </flow>
