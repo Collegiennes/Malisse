@@ -9,6 +9,10 @@ public class MainGameView : View
 	private const string HAND_PLAYER_PREFAB_PATH = "Prefabs/Hands/HandPlayer{0}";
 	private const string LEVEL_NAME = "Level{0}";
 	private const int NB_LEVELS = 1;
+	private readonly Vector2 PLAYER_1_POSITION = new Vector2(-150.0f, 0.0f);
+	private readonly Vector2 PLAYER_2_POSITION = new Vector2(150.0f, 0.0f);
+
+	// delegates
 
 	// enums
 	
@@ -29,6 +33,19 @@ public class MainGameView : View
 	#endregion
 	
 	#region Unity API
+#if UNITY_EDITOR
+	private void OnGUI()
+	{
+		if (GUI.Button(new Rect(10, 10, 150, 100), "SKIP"))
+		{
+			if (!m_IsLoading)
+			{
+				LoadNextLevel();
+			}
+		}
+	}
+#endif
+
 	#endregion
 
 	#region View Implementation
@@ -46,10 +63,7 @@ public class MainGameView : View
 			LoadLevelList();
 		}
 
-		LoadLevel();
-		
-		LoadHand(1);
-		LoadHand(2);
+		LoadNextLevel();
 	}
 	#endregion
 	
@@ -60,18 +74,28 @@ public class MainGameView : View
 	#endregion
 	
 	#region Private Methods
-	private void LoadHand(int playerId)
+	private void LoadHand(int playerId, Vector2 localPosition)
 	{
 		GameObject handPrefab = Resources.Load(string.Format(HAND_PLAYER_PREFAB_PATH, playerId.ToString())) as GameObject;
 		if (handPrefab != null)
 		{
 			GameObject handObj = GameObject.Instantiate(handPrefab) as GameObject;
-			handObj.transform.parent = m_SceneAnchor != null ? m_SceneAnchor : transform;
+			handObj.transform.parent = m_CurrentLevel.transform;
+			handObj.transform.localPosition = new Vector3(localPosition.x, localPosition.y, handObj.transform.localPosition.z);
 
 			Hand hand = handObj.GetComponent<Hand>();
 
 			m_Hands.Add(playerId, hand);
 		}
+	}
+
+	private void UnloadHands()
+	{
+		foreach (Hand hand in m_Hands.Values)
+		{
+			Destroy(hand.gameObject);
+		}
+		m_Hands.Clear();
 	}
 
 	private void LoadLevelList(int levelId)
@@ -88,7 +112,7 @@ public class MainGameView : View
 		}
 	}
 
-	private void LoadLevel()
+	private void LoadNextLevel()
 	{
 		if (!m_IsLoading)
 		{
@@ -106,6 +130,9 @@ public class MainGameView : View
 	private IEnumerator LoadLevelAsync()
 	{
 		m_IsLoading = true;
+
+		// Unload hands.
+		UnloadHands();
 
 		// Destroy previous.
 		if (m_PreviousLevel != null)
@@ -130,8 +157,33 @@ public class MainGameView : View
 			levelObj.transform.parent = m_SceneAnchor;
 
 			m_CurrentLevel = levelObj.GetComponent<Level>();
-		}
 
+			PositionNewLevel();
+		}
+	}
+
+	private void PositionNewLevel()
+	{
+		if (m_PreviousLevel == null)
+		{
+			m_CurrentLevel.transform.localPosition = Vector3.zero;
+
+			OnCameraMovementEnded();
+		}
+		else
+		{
+			m_CurrentLevel.transform.position = new Vector3(0.0f, 0.0f, m_PreviousLevel.m_Bounds.bounds.max.z + m_CurrentLevel.m_Bounds.bounds.extents.z);
+
+			float offset = m_CurrentLevel.transform.position.z - m_PreviousLevel.transform.position.z;
+			CameraController.Instance.MoveGameCamera(offset, OnCameraMovementEnded);
+		}
+	}
+
+	private void OnCameraMovementEnded()
+	{
+		LoadHand(1, PLAYER_1_POSITION);
+		LoadHand(2, PLAYER_2_POSITION);
+		
 		m_IsLoading = false;
 	}
 	#endregion
