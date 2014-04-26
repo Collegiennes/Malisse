@@ -5,6 +5,18 @@ class Malisse : MonoBehaviour
     RoadWalker walker;
     tk2dAnimatedSprite sprite;
 
+    string[] PerAngleAnimationMap =
+    {
+        "walk_b",
+        "walk_rb",
+        "walk_rf", // walk_r
+        "walk_rf", 
+        "walk_f",
+        "walk_lf", 
+        "walk_lf", // walk_l
+        "walk_lb", 
+    };
+
     void Awake()
     {
         var camGO = GameObject.Find("MainCamera");
@@ -13,37 +25,31 @@ class Malisse : MonoBehaviour
 
         walker = GetComponent<RoadWalker>();
         sprite = GetComponent<tk2dAnimatedSprite>();
+
+        sinceDirectionReevaluated = 0.1f;
     }
+
+    Vector3 lastPosition;
+    Vector3 lastDirection;
+    float sinceDirectionReevaluated;
 
     void Update()
     {
-        var d = new Vector2(-walker.CurrentDirection.z, walker.CurrentDirection.x);
-        //Debug.Log(d);
+        sinceDirectionReevaluated += Time.deltaTime;
+        if (sinceDirectionReevaluated > 0.1f)
+        {
+            lastDirection = transform.position - lastPosition;
+            lastPosition = transform.position;
 
-        // mostly right, some front
-        if (d.x > 0 && Mathf.Abs(d.y) < 0.5 && d.y < 0 && sprite.clipId != sprite.GetClipIdByName("walk_rf"))
-        {
-//            Debug.Log("rf");
-            sprite.Play("walk_rf");
-        }
-        // mostly left, some front
-        if (d.x < 0 && Mathf.Abs(d.y) < 0.5 && d.y < 0 && sprite.clipId != sprite.GetClipIdByName("walk_lf"))
-        {
-//            Debug.Log("lf");
-            sprite.Play("walk_lf");
-        }
+            float angle = Mathf.Atan2(lastDirection.x, lastDirection.z);
+            if (angle < 0) angle += Mathf.PI * 2;
+            int index = Mathf.RoundToInt(angle / (Mathf.PI * 2) * 8);
+            if (index == 8) index = 0;
+            //Debug.Log("Angle : " + angle + " | Index = " + index);
 
-        // mostly back, some right
-        if (d.y > 0.25 && Mathf.Abs(d.x) < 0.5 && d.x > 0 && sprite.clipId != sprite.GetClipIdByName("walk_rb"))
-        {
-//            Debug.Log("rb");
-            sprite.Play("walk_rb");
-        }
-        // mostly back, some left
-        if (d.y > 0.25 && Mathf.Abs(d.x) < 0.5 && d.x < 0 && sprite.clipId != sprite.GetClipIdByName("walk_lb"))
-        {
-//            Debug.Log("lb");
-            sprite.Play("walk_lb");
+            var animName = PerAngleAnimationMap[index];
+            if (sprite.CurrentClip.name != animName)
+                sprite.Play(animName);
         }
     }
 }
