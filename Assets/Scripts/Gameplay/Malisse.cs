@@ -6,12 +6,11 @@ class Malisse : MonoBehaviour
 
     void Awake()
     {
-        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
-        transform.rotation = mainCamera.transform.rotation;
-    }
-
-    void Update()
-    {
-        //transform.LookAt(mainCamera.transform.position);
+        var camGO = GameObject.Find("MainCamera");
+        if (camGO)
+        {
+            mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+            transform.rotation = mainCamera.transform.rotation;
+        }
     }
 }
