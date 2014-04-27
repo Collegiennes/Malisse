@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -204,12 +204,14 @@ public class Malisse : MonoBehaviour
 
 				if (postHit.collider.gameObject.name != "BG" && heightDiff <= 25 && !walkableRefreshList.ContainsKey(postHit.collider))
 		        {
-			        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
-					walkableRefreshList.Add(postHit.collider, 0);
+			        if (postHit.collider.gameObject.GetComponent<Obstacle>().m_GrabbedHandleCount > 0)
+				        heightDiff = 10000;
+			        else
+			        {
+				        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
+				        walkableRefreshList.Add(postHit.collider, 0);
+			        }
 		        }
-
-		        if (postHit.collider.gameObject.GetComponent<Obstacle>().m_GrabbedHandleCount > 0)
-			        heightDiff = 10000;
 	        }
 	        else
 		        Debug.Log("No hit!!");
