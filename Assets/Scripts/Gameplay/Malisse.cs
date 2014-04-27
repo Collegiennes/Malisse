@@ -197,21 +197,28 @@ public class Malisse : MonoBehaviour
 	        float heightDiff = 0;
 	        if (postResults.Length > 0)
 	        {
-				postHit = postResults.OrderBy(x => x.distance).First();
+				var hits = postResults.Where(x => x.collider.GetComponent<Obstacle>()).OrderBy(x => x.distance);
 
-		        heightDiff = postHit.point.y - Walker.GroundHeight;
-		        Debug.Log("Heightdiff for " + gameObject.name + ": " + heightDiff + " to " + postHit.collider.gameObject.name);
-
-				if (postHit.collider.gameObject.name != "BG" && heightDiff <= 25 && !walkableRefreshList.ContainsKey(postHit.collider))
+		        if (hits.Any())
 		        {
-			        if (postHit.collider.gameObject.GetComponent<Obstacle>().m_GrabbedHandleCount > 0)
-				        heightDiff = 10000;
-			        else
+			        postHit = hits.First();
+
+				    heightDiff = postHit.point.y - Walker.GroundHeight;
+			        Debug.Log("Heightdiff for " + gameObject.name + ": " + heightDiff + " to " + postHit.collider.gameObject.name);
+
+			        if (postHit.collider && heightDiff <= 25 && !walkableRefreshList.ContainsKey(postHit.collider))
 			        {
-				        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
-				        walkableRefreshList.Add(postHit.collider, 0);
+				        if (postHit.collider.gameObject.GetComponent<Obstacle>().m_GrabbedHandleCount > 0)
+					        heightDiff = 10000;
+				        else
+				        {
+					        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
+					        walkableRefreshList.Add(postHit.collider, 0);
+				        }
 			        }
 		        }
+				else
+					Debug.Log("No hit!!");
 	        }
 	        else
 		        Debug.Log("No hit!!");
