@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 class Malisse : MonoBehaviour
@@ -27,7 +28,22 @@ class Malisse : MonoBehaviour
         walker = GetComponent<RoadWalker>();
         sprite = GetComponent<tk2dAnimatedSprite>();
 
+        walker.Step();
+        lastPosition = transform.position;
+        walker.Step();
+        sinceDirectionReevaluated = 1;
+        UpdateDirection();
+
+        walker.Stop();
+        walker.OnPathDone = MainGameView.Instance.LoadNextLevel;
+        MainGameView.Instance.m_OnSceneReadyCallback += walker.Resume;
+
         sinceDirectionReevaluated = 0.1f;
+    }
+
+    void OnDestroy()
+    {
+        walker.OnPathDone = null;
     }
 
     Vector3 lastPosition;
@@ -45,6 +61,8 @@ class Malisse : MonoBehaviour
         sinceDirectionReevaluated += Time.deltaTime;
         if (sinceDirectionReevaluated > 0.1f)
         {
+            sinceDirectionReevaluated = 0;
+
             lastDirection = transform.position - lastPosition;
             lastPosition = transform.position;
 
@@ -55,7 +73,7 @@ class Malisse : MonoBehaviour
             //Debug.Log("Angle : " + angle + " | Index = " + index);
 
             var animName = PerAngleAnimationMap[index];
-            var lastName = sprite.CurrentClip.name;
+            var lastName = sprite.CurrentClip == null ? "" : sprite.CurrentClip.name;
             if (lastName != animName)
             {
                 sprite.Play(animName);

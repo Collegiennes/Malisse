@@ -15,6 +15,8 @@ class RoadWalker : MonoBehaviour
 
     public float HeightOffset { get; set; }
 
+    public Action OnPathDone;
+
     void Update()
     {
         if (!RoadToWalk) return;
@@ -34,14 +36,18 @@ class RoadWalker : MonoBehaviour
 
         if (done)
         {
-            // finished walking the path! change level?
-            // for now, wrap around
-            DistanceFromStart = 0;
-            RoadToWalk.RoadCenterAt(DistanceFromStart, out done, out curDir);
+            if (OnPathDone != null)
+                OnPathDone();
+            return;
         }
 
         transform.position = new Vector3(worldPos.x, worldPos.y + HeightOffset, worldPos.z);
         CurrentDirection = curDir.normalized;
+    }
+
+    public void Step()
+    {
+        Update();
     }
 
     public void Stop()
