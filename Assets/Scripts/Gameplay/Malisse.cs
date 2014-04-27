@@ -4,7 +4,8 @@ using UnityEngine;
 
 class Malisse : MonoBehaviour
 {
-    RoadWalker walker;
+    public RoadWalker Walker;
+
     tk2dAnimatedSprite sprite;
 
     string[] PerAngleAnimationMap =
@@ -25,26 +26,32 @@ class Malisse : MonoBehaviour
         if (camGO)
             transform.rotation = camGO.transform.rotation;
 
-        walker = GetComponent<RoadWalker>();
+        Walker = GetComponent<RoadWalker>();
         sprite = GetComponent<tk2dAnimatedSprite>();
 
-        walker.Step();
+        Walker.Step();
         lastPosition = transform.position;
-        walker.Step();
+        Walker.Step();
         sinceDirectionReevaluated = 1;
         UpdateDirection();
 
-        walker.Stop();
-        walker.OnPathDone = MainGameView.Instance.LoadNextLevel;
-        MainGameView.Instance.m_OnSceneReadyCallback += walker.Resume;
+        if (MainGameView.Instance)
+        {
+            Walker.Stop();
+            Walker.OnPathDone = MainGameView.Instance.LoadNextLevel;
+            MainGameView.Instance.m_OnSceneReadyCallback += Walker.Resume;
+        }
 
         sinceDirectionReevaluated = 0.1f;
     }
 
     void OnDestroy()
     {
-        walker.OnPathDone = null;
-        MainGameView.Instance.m_OnSceneReadyCallback -= walker.Resume;
+        if (MainGameView.Instance)
+        {
+            Walker.OnPathDone = null;
+            MainGameView.Instance.m_OnSceneReadyCallback -= Walker.Resume;
+        }
     }
 
     Vector3 lastPosition;
@@ -53,7 +60,7 @@ class Malisse : MonoBehaviour
 
     void Update()
     {
-        if (!walker.Stopped)
+        if (!Walker.Stopped)
             UpdateDirection();
     }
 
@@ -91,7 +98,7 @@ class Malisse : MonoBehaviour
 
     void OnCollisionEnter(Collision info)
     {
-        if (!walker.Stopped && 
+        if (!Walker.Stopped && 
             (info.gameObject.layer == LayerMask.NameToLayer("Default") ||
              info.gameObject.layer == LayerMask.NameToLayer("Death")))
         {
@@ -103,7 +110,7 @@ class Malisse : MonoBehaviour
     {
         var lastName = sprite.CurrentClip.name;
 
-        walker.Stop();
+        Walker.Stop();
 
         // undo flip just in case
         transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -114,9 +121,9 @@ class Malisse : MonoBehaviour
         while (t < 1)
         {
             float step = Mathf.Pow(1 - t, 1.25f);
-            walker.DistanceFromStart -= Time.deltaTime * 30.0f * step;
+            Walker.DistanceFromStart -= Time.deltaTime * 30.0f * step;
 
-            walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 75f;
+            Walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 75f;
 
             //transform.position = new Vector3();
             yield return new WaitForEndOfFrame();
@@ -124,13 +131,13 @@ class Malisse : MonoBehaviour
         }
 
         sprite.Play("timeout");
-        walker.HeightOffset = -75.0f;
+        Walker.HeightOffset = -75.0f;
 
         yield return new WaitForSeconds(2.0f);
 
-        walker.HeightOffset = 0.0f;
+        Walker.HeightOffset = 0.0f;
         sprite.Play(lastName);
 
-        walker.Resume();
+        Walker.Resume();
     }
 }
