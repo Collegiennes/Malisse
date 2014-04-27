@@ -53,18 +53,20 @@ class Rabbit : MonoBehaviour
         Scattering = true;
         Walker.enabled = false;
 
-        var r = Random.insideUnitCircle;
+        var r = Random.insideUnitCircle.normalized;
         ScatterDestination = new Vector3(r.x, 0, r.y);
     }
 
     void Update()
     {
-        Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
-        foreach (var r in GetComponentsInChildren<Renderer>())
-            r.enabled = Walker.DistanceFromStart > 0;
-
         if (Scattering)
             transform.position += ScatterDestination * Time.deltaTime * ScatterSpeed;
+        else
+        {
+            Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
+            foreach (var r in GetComponentsInChildren<Renderer>())
+                r.enabled = Walker.DistanceFromStart > 0;
+        }
 
         if (!Stunned)
             UpdateDirection();
@@ -88,7 +90,7 @@ class Rabbit : MonoBehaviour
             sprite.Play(animName);
 
             if (Scattering)
-                sprite.ClipFps = 17;
+                sprite.ClipFps = 19;
 
             if ((animName.StartsWith("r") && !lastName.StartsWith("r")) || (lastName.StartsWith("r") && !animName.StartsWith("r")))
             {

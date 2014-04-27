@@ -110,9 +110,9 @@ class Malisse : MonoBehaviour
         sprite.Play("fall");
 
         // Scatter farthest one!
-        var toScatter = GetComponentsInChildren<Rabbit>().OrderBy(x => x.DistanceToMalisse).Last();
-        if (toScatter.DistanceToMalisse > 0)
-            toScatter.Scatter();
+        var toScatter = GetComponentsInChildren<Rabbit>().OrderBy(x => x.DistanceToMalisse);
+        if (toScatter.Any() && toScatter.Last().DistanceToMalisse > 0)
+            toScatter.Last().Scatter();
 
         foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
         {
