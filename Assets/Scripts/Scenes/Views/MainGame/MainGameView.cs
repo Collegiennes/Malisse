@@ -189,7 +189,7 @@ public class MainGameView : AlisseView
 		m_LevelIds.Clear();
 		for (int i = 0; i < m_NbLevels; ++i)
 		{
-			m_LevelIds.Insert(Random.Range(0, m_LevelIds.Count), i + 1);
+			m_LevelIds.Insert(Random.Range(0, m_LevelIds.Count + 1), i + 1);
 		}
 	}
 
