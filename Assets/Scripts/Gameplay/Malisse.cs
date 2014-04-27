@@ -89,8 +89,7 @@ class Malisse : MonoBehaviour
                 if (animName == "walk_rs" || lastName == "walk_rs")
                 {
                     //Debug.Log("name = " + animName);
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * (animName == "walk_rs" ? -1 : 1),
-                                                       transform.localScale.y, transform.localScale.z);
+                    sprite.FlipX();
                 }
             }
         }
