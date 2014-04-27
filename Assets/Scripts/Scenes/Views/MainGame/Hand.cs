@@ -66,14 +66,14 @@ public class Hand : MonoBehaviour
 		}
 
 		// Look at.
-		m_Asset.transform.rotation = m_HandCamera.transform.rotation;
+		transform.rotation = m_HandCamera.transform.rotation;
 
 		// Clamp position.
 		if (m_Bounds != null)
 		{
-			transform.position = new Vector3(Mathf.Clamp(transform.position.x, m_Bounds.bounds.min.x + collider.bounds.extents.x, m_Bounds.bounds.max.x - collider.bounds.extents.x), 
+			transform.position = new Vector3(Mathf.Clamp(transform.position.x, m_Bounds.bounds.min.x + (collider as CapsuleCollider).radius, m_Bounds.bounds.max.x - (collider as CapsuleCollider).radius), 
 			                                 transform.position.y,
-			                                 Mathf.Clamp(transform.position.z, m_Bounds.bounds.min.z + collider.bounds.extents.z, m_Bounds.bounds.max.z - collider.bounds.extents.z));
+			                                 Mathf.Clamp(transform.position.z, m_Bounds.bounds.min.z + (collider as CapsuleCollider).radius, m_Bounds.bounds.max.z - (collider as CapsuleCollider).radius));
 		}
 	}
 
@@ -132,17 +132,12 @@ public class Hand : MonoBehaviour
 
 		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
-			m_GrabbedObstacleHandle = m_HoveringObstacleHandle;
-			m_GrabbedObstacleHandle.OnGrabbed();
-
-			m_GrabbedObstacleJoin = gameObject.AddComponent<HingeJoint>();
-			m_GrabbedObstacleJoin.connectedBody = m_HoveringObstacleHandle.m_Obstacle.rigidbody;
-			
 			// Find hit point.
-			/*Vector3 handHitPosition = transform.position - (CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward) * 2000.0f);
-			RaycastHit[] hits = Physics.RaycastAll(handHitPosition, CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward));
+			Vector3 handHitPosition = transform.position - (CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward) * 2000.0f);
+			RaycastHit[] hits = Physics.SphereCastAll(handHitPosition, (collider as CapsuleCollider).radius, CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward));
 
-			Vector3 hitPoint = m_GrabbedObstacleJoin.transform.position;
+			Vector3 hitPoint = transform.position;
+			bool isHit = false;
 			if (hits.Length > 0)
 			{
 				foreach (RaycastHit hit in hits)
@@ -151,18 +146,31 @@ public class Hand : MonoBehaviour
 					if (obstacle != null)
 					{
 						hitPoint = hit.point;
+						isHit = true;
 						break;
 					}
 				}
 			}
 
-			// TODO technobeanie: Transform world to local: the Y is no more the Y.
-			m_GrabbedObstacleJoin.anchor = transform.InverseTransformPoint(hitPoint - transform.position);*/
-			
-			// Move hand.
-			m_GoalHeight = GRABBED_OFFSET;
-			StopCoroutine("RaiseHand");
-			StartCoroutine("RaiseHand");
+			if (isHit)
+			{
+				m_GrabbedObstacleHandle = m_HoveringObstacleHandle;
+				m_GrabbedObstacleHandle.OnGrabbed();
+				
+				GameObject joint = new GameObject("Join");
+				joint.transform.position = hitPoint;
+				joint.transform.parent = transform;
+				
+				m_GrabbedObstacleJoin = joint.AddComponent<HingeJoint>();
+				m_GrabbedObstacleJoin.rigidbody.useGravity = false;
+				m_GrabbedObstacleJoin.rigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+				m_GrabbedObstacleJoin.connectedBody = m_HoveringObstacleHandle.m_Obstacle.rigidbody;
+				
+				// Move hand.
+				m_GoalHeight = GRABBED_OFFSET;
+				StopCoroutine("RaiseHand");
+				StartCoroutine("RaiseHand");
+			}
 		}
 	}
 	
@@ -177,7 +185,7 @@ public class Hand : MonoBehaviour
 				m_GrabbedObstacleHandle.OnReleased();
 				m_GrabbedObstacleHandle = null;
 
-				Destroy(m_GrabbedObstacleJoin);
+				Destroy(m_GrabbedObstacleJoin.gameObject);
 				m_GrabbedObstacleJoin = null;
 				
 				yield return null;
