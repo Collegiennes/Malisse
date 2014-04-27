@@ -36,7 +36,9 @@ class RoadWalker : MonoBehaviour
             return;
         }
 
-        transform.position = new Vector3(worldPos.x, worldPos.y + HeightOffset, worldPos.z);
+        var destinationPosition = new Vector3(worldPos.x, worldPos.y + HeightOffset, worldPos.z);
+
+        transform.position = destinationPosition;
         CurrentDirection = curDir.normalized;
     }
 

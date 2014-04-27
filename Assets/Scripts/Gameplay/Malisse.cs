@@ -112,6 +112,22 @@ class Malisse : MonoBehaviour
             (info.gameObject.layer == LayerMask.NameToLayer("Default") ||
              info.gameObject.layer == LayerMask.NameToLayer("Death")))
         {
+//            RaycastHit preHit, postHit;
+//            var preMove = Physics.Raycast(transform.position - Vector3.up * 1080, Vector3.down, out preHit);
+//            var postMove = Physics.Raycast(destinationPosition - Vector3.up * 1080, Vector3.down, out postHit);
+
+            Debug.Log(info.contacts.Count() + " contacts");
+            var point = info.contacts.First(x => x.otherCollider.transform.gameObject.layer != LayerMask.NameToLayer("Ground")).point;
+
+            //point = transform.position + (point - transform.position).normalized * 5;
+            
+            RaycastHit preHit, postHit;
+            preHit = Physics.RaycastAll(new Ray(point + Vector3.up * 1080, Vector3.down), 2160).First(x => x.transform.gameObject.name != "RotatedCollider");
+            postHit = Physics.RaycastAll(new Ray(transform.position + Vector3.up * 1080, Vector3.down), 2160).First(x => x.transform.gameObject.name != "RotatedCollider");
+
+            var heightDiff = postHit.point.y - preHit.point.y;
+            Debug.Log("Heightdiff for " + gameObject.name + ": " + heightDiff);
+
             StartCoroutine(JumpBackAndStartle());
         }
     }
