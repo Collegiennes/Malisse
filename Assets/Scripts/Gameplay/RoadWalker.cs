@@ -46,7 +46,10 @@ public class RoadWalker : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		AudioManager.Instance.StopLoopingSFX(m_SFXWalk);
+		if (AudioManager.Instance != null)
+		{
+			AudioManager.Instance.StopLoopingSFX(m_SFXWalk);
+		}
 		m_SFXWalk = null;
 	}
 
