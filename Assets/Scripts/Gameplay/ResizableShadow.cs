@@ -2,12 +2,17 @@
 
 class ResizableShadow : MonoBehaviour
 {
+    Transform camTransform;
     Collider parentCollider;
 
     Vector3 baseScale;
 
     void Awake()
     {
+        var camGO = GameObject.Find("MainCamera");
+        if (camGO)
+            camTransform = camGO.transform;
+
         parentCollider = transform.parent.collider;
 
         if (parentCollider is BoxCollider)
@@ -31,8 +36,10 @@ class ResizableShadow : MonoBehaviour
 
     void Update()
     {
+        var camFwd = camTransform ? camTransform.TransformDirection(Vector3.forward) : Vector3.zero;
+
         transform.localPosition = Vector3.zero;
-        transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+        transform.position = new Vector3(transform.position.x, 0, transform.position.z) - camFwd * 200;
 
         var height = Mathf.Max(transform.parent.position.y, 1);
         float distance = Mathf.Clamp01(1 - height / 475.0f);
