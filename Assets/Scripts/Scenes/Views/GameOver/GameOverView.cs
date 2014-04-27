@@ -41,6 +41,7 @@ public class GameOverView : AlisseView
 			    ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.START.ToString()).Count > 0)
 			{
 				AudioManager.Instance.PlaySFX(m_SFXClick);
+
 				FlowManager.Instance.TriggerAction("GO_TO_MAIN_MENU");
 			}
 		}
