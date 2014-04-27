@@ -50,7 +50,10 @@ public class Hand : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		AudioManager.Instance.StopLoopingSFX(m_SFXHoldGrab);
+		if (AudioManager.Instance != null)
+		{
+			AudioManager.Instance.StopLoopingSFX(m_SFXHoldGrab);
+		}
 	}
 
 	private void FixedUpdate()
@@ -145,7 +148,7 @@ public class Hand : MonoBehaviour
 		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
 			AudioManager.Instance.PlaySFX(m_SFXGrab);
-			AudioManager.Instance.PlayLoopingSFX(m_SFXHoldGrab);
+			AudioManager.Instance.PlayLoopingSFX(m_SFXHoldGrab, 0.4f);
 
 			// Find hit point.
 			Vector3 handHitPosition = transform.position - (CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward) * 2000.0f);

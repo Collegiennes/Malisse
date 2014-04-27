@@ -12,6 +12,7 @@ public class Malisse : MonoBehaviour
     public RoadWalker Walker;
 	public float m_DistanceBetweenCharacters = 5.0f;
 	public List<AudioClip> m_SFXEfforts = new List<AudioClip>();
+	public List<AudioClip> m_SFXHitFloor = new List<AudioClip>();
 	
 	private List<Rabbit> m_Rabbits = new List<Rabbit>();
 	
@@ -191,6 +192,8 @@ public class Malisse : MonoBehaviour
             b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
             b.Walker.HeightOffset = -12.0f;
         }
+
+		AudioManager.Instance.PlaySFX(m_SFXHitFloor);
 
         yield return new WaitForSeconds(2.0f);
 
