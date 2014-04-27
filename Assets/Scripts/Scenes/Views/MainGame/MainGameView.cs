@@ -30,6 +30,7 @@ public class MainGameView : AlisseView
 	public List<HandAssetNames> m_HandAssetNames = new List<HandAssetNames>();
 
 	public OnSceneReady m_OnSceneReadyCallback = null;
+	public int m_NbRabbits = 5;
 	
 	// protected
 	
@@ -39,7 +40,7 @@ public class MainGameView : AlisseView
 	private Level m_CurrentLevel = null;
 	private Level m_PreviousLevel = null;
 	private List<int> m_LevelIds = new List<int>();
-	private int m_LevelIndex = -1;
+	private int m_LevelIndex = 0;
 	private bool m_IsLoading = false;
 	private HandAssetNames m_Hand1Assets = null;
 	private HandAssetNames m_Hand2Assets = null;
@@ -96,16 +97,31 @@ public class MainGameView : AlisseView
 			LoadLevelList();
 		}
 
-		LoadNextLevel();
+		LoadNextLevel(true);
+	}
+
+	public override void HandleAction(FlowActionData actionData)
+	{
+		base.HandleAction(actionData);
+
+		if (actionData.ActionName == "LOSE_RABBIT")
+		{
+			m_NbRabbits--;
+		}
 	}
 	#endregion
 	
 	#region Public Methods
-	public void LoadNextLevel()
+	public void LoadNextLevel(bool firstLevel = false)
 	{
 		if (!m_IsLoading)
 		{
-			m_LevelIndex++;
+			if (!firstLevel)
+			{
+				m_NbRabbits++;
+				m_LevelIndex++;
+			}
+
 			if (m_LevelIndex >= m_LevelIds.Count)
 			{
 				m_LevelIndex = 0;
@@ -203,6 +219,12 @@ public class MainGameView : AlisseView
 			levelObj.name = "LEVEL_" + m_LevelIds[m_LevelIndex].ToString();
 
 			m_CurrentLevel = levelObj.GetComponent<Level>();
+
+			// Add rabbit.
+			for (int i = 0; i < m_NbRabbits; ++i)
+			{
+				m_CurrentLevel.AddRabbit();
+			}
 
 			PositionNewLevel();
 		}
