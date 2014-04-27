@@ -35,13 +35,10 @@ class Rabbit : MonoBehaviour
         Walker.RoadToWalk = GameUtils.FindAssociatedLevel(transform).transform.Find("Road").GetComponent<Spline>();
 
         Walker.Stop();
-
-        sinceDirectionReevaluated = 0.1f;
     }
 
     Vector3 lastPosition;
     Vector3 lastDirection;
-    float sinceDirectionReevaluated;
 
     void Update()
     {
@@ -53,30 +50,24 @@ class Rabbit : MonoBehaviour
 
     void UpdateDirection()
     {
-        sinceDirectionReevaluated += Time.deltaTime;
-        if (sinceDirectionReevaluated > 0.1f)
+        lastDirection = transform.position - lastPosition;
+        lastPosition = transform.position;
+
+        float angle = Mathf.Atan2(lastDirection.x, lastDirection.z);
+        if (angle < 0) angle += Mathf.PI * 2;
+        int index = Mathf.RoundToInt(angle / (Mathf.PI * 2) * 8);
+        if (index == 8) index = 0;
+        //Debug.Log("Angle : " + angle + " | Index = " + index);
+
+        var animName = PerAngleAnimationMap[index];
+        var lastName = sprite.CurrentClip == null ? " " : sprite.CurrentClip.name;
+        if (lastName != animName)
         {
-            sinceDirectionReevaluated = 0;
+            sprite.Play(animName);
 
-            lastDirection = transform.position - lastPosition;
-            lastPosition = transform.position;
-
-            float angle = Mathf.Atan2(lastDirection.x, lastDirection.z);
-            if (angle < 0) angle += Mathf.PI * 2;
-            int index = Mathf.RoundToInt(angle / (Mathf.PI * 2) * 8);
-            if (index == 8) index = 0;
-            //Debug.Log("Angle : " + angle + " | Index = " + index);
-
-            var animName = PerAngleAnimationMap[index];
-            var lastName = sprite.CurrentClip == null ? " " : sprite.CurrentClip.name;
-            if (lastName != animName)
+            if ((animName.StartsWith("r") && !lastName.StartsWith("r")) || (lastName.StartsWith("r") && !animName.StartsWith("r")))
             {
-                sprite.Play(animName);
-
-                if ((animName.StartsWith("r") && !lastName.StartsWith("r")) || (lastName.StartsWith("r") && !animName.StartsWith("r")))
-                {
-                    sprite.FlipX();
-                }
+                sprite.FlipX();
             }
         }
     }

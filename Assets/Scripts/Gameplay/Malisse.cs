@@ -36,7 +36,6 @@ class Malisse : MonoBehaviour
         Walker.Step();
         lastPosition = transform.position;
         Walker.Step();
-        sinceDirectionReevaluated = 1;
         UpdateDirection();
 
         if (MainGameView.Instance)
@@ -45,8 +44,6 @@ class Malisse : MonoBehaviour
             Walker.OnPathDone = MainGameView.Instance.LoadNextLevel;
             MainGameView.Instance.m_OnSceneReadyCallback += Walker.Resume;
         }
-
-        sinceDirectionReevaluated = 0.1f;
     }
 
     void OnDestroy()
@@ -60,7 +57,6 @@ class Malisse : MonoBehaviour
 
     Vector3 lastPosition;
     Vector3 lastDirection;
-    float sinceDirectionReevaluated;
 
     void Update()
     {
@@ -70,31 +66,25 @@ class Malisse : MonoBehaviour
 
     void UpdateDirection()
     {
-        sinceDirectionReevaluated += Time.deltaTime;
-        if (sinceDirectionReevaluated > 0.1f)
+        lastDirection = transform.position - lastPosition;
+        lastPosition = transform.position;
+
+        float angle = Mathf.Atan2(lastDirection.x, lastDirection.z);
+        if (angle < 0) angle += Mathf.PI * 2;
+        int index = Mathf.RoundToInt(angle / (Mathf.PI * 2) * 8);
+        if (index == 8) index = 0;
+        //Debug.Log("Angle : " + angle + " | Index = " + index);
+
+        var animName = PerAngleAnimationMap[index];
+        var lastName = sprite.CurrentClip == null ? "" : sprite.CurrentClip.name;
+        if (lastName != animName)
         {
-            sinceDirectionReevaluated = 0;
+            sprite.Play(animName);
 
-            lastDirection = transform.position - lastPosition;
-            lastPosition = transform.position;
-
-            float angle = Mathf.Atan2(lastDirection.x, lastDirection.z);
-            if (angle < 0) angle += Mathf.PI * 2;
-            int index = Mathf.RoundToInt(angle / (Mathf.PI * 2) * 8);
-            if (index == 8) index = 0;
-            //Debug.Log("Angle : " + angle + " | Index = " + index);
-
-            var animName = PerAngleAnimationMap[index];
-            var lastName = sprite.CurrentClip == null ? "" : sprite.CurrentClip.name;
-            if (lastName != animName)
+            if (animName == "walk_rs" || lastName == "walk_rs")
             {
-                sprite.Play(animName);
-
-                if (animName == "walk_rs" || lastName == "walk_rs")
-                {
-                    //Debug.Log("name = " + animName);
-                    sprite.FlipX();
-                }
+                //Debug.Log("name = " + animName);
+                sprite.FlipX();
             }
         }
     }
@@ -128,7 +118,7 @@ class Malisse : MonoBehaviour
         }
 
         var heights = GetComponentsInChildren<Rabbit>().Select(_ => Random.Range(50.0f, 150)).ToArray();
-        var speeds = GetComponentsInChildren<Rabbit>().Select(_ => Random.Range(1, 2.5f)).ToArray();
+        var speeds = GetComponentsInChildren<Rabbit>().Select(_ => Random.Range(1, 2.0f)).ToArray();
 
         float t = 0;
         while (t < 1)
