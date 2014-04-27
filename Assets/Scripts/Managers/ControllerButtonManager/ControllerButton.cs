@@ -16,7 +16,7 @@ public class ControllerButton : ActionButton
 	// protected
 	
 	// private
-	private bool m_IsOver = false;
+	protected bool m_IsOver = false;
 	
 	// properties
 	#endregion
