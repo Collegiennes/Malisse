@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 class Malisse : MonoBehaviour
 {
@@ -35,6 +36,12 @@ class Malisse : MonoBehaviour
 
     void Update()
     {
+        if (!walker.Stopped)
+            UpdateDirection();
+    }
+
+    void UpdateDirection()
+    {
         sinceDirectionReevaluated += Time.deltaTime;
         if (sinceDirectionReevaluated > 0.1f)
         {
@@ -61,5 +68,50 @@ class Malisse : MonoBehaviour
                 }
             }
         }
+    }
+
+    void OnCollisionEnter(Collision info)
+    {
+        if (!walker.Stopped && 
+            (info.gameObject.layer == LayerMask.NameToLayer("Default") ||
+             info.gameObject.layer == LayerMask.NameToLayer("Death")))
+        {
+            StartCoroutine(JumpBackAndStartle());
+        }
+    }
+
+    IEnumerator JumpBackAndStartle()
+    {
+        var lastName = sprite.CurrentClip.name;
+
+        walker.Stop();
+
+        // undo flip just in case
+        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+
+        sprite.Play("fall");
+
+        float t = 0;
+        while (t < 1)
+        {
+            float step = Mathf.Pow(1 - t, 1.25f);
+            walker.DistanceFromStart -= Time.deltaTime * 30.0f * step;
+
+            walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 75f;
+
+            //transform.position = new Vector3();
+            yield return new WaitForEndOfFrame();
+            t += Time.deltaTime;
+        }
+
+        sprite.Play("timeout");
+        walker.HeightOffset = -75.0f;
+
+        yield return new WaitForSeconds(2.0f);
+
+        walker.HeightOffset = 0.0f;
+        sprite.Play(lastName);
+
+        walker.Resume();
     }
 }

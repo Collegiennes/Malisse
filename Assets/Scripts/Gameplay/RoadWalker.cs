@@ -10,7 +10,10 @@ class RoadWalker : MonoBehaviour
     public float Speed = 1;
     public float Delay = 0;
 
-    float distanceFromStart;
+    public float DistanceFromStart { get; set; }
+    public bool Stopped { get; private set; }
+
+    public float HeightOffset { get; set; }
 
     void Update()
     {
@@ -22,22 +25,33 @@ class RoadWalker : MonoBehaviour
             return;
         }
 
-        distanceFromStart += 0.1f * Speed;
+        if (!Stopped)
+            DistanceFromStart += Speed * Time.deltaTime * 5.0f;
 
         Vector3 curDir;
         bool done;
-        var worldPos = RoadToWalk.RoadCenterAt(distanceFromStart, out done, out curDir);
+        var worldPos = RoadToWalk.RoadCenterAt(DistanceFromStart, out done, out curDir);
 
         if (done)
         {
             // finished walking the path! change level?
             // for now, wrap around
-            distanceFromStart = 0;
-            RoadToWalk.RoadCenterAt(distanceFromStart, out done, out curDir);
+            DistanceFromStart = 0;
+            RoadToWalk.RoadCenterAt(DistanceFromStart, out done, out curDir);
         }
 
-        transform.position = new Vector3(worldPos.x, 0, worldPos.z);
+        transform.position = new Vector3(worldPos.x, worldPos.y + HeightOffset, worldPos.z);
         CurrentDirection = curDir.normalized;
+    }
+
+    public void Stop()
+    {
+        Stopped = true;
+    }
+
+    public void Resume()
+    {
+        Stopped = false;
     }
 
     public Vector3 CurrentDirection { get; private set; }
