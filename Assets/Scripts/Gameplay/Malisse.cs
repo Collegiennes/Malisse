@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 class Malisse : MonoBehaviour
 {
@@ -110,13 +112,23 @@ class Malisse : MonoBehaviour
     IEnumerator JumpBackAndStartle()
     {
         var lastName = sprite.CurrentClip.name;
+        if (lastName == "walk_rs")
+            sprite.FlipX();
 
         Walker.Stop();
 
-        // undo flip just in case
-        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-
         sprite.Play("fall");
+
+        foreach (var b in GetComponentsInChildren<Rabbit>())
+        {
+            if (b.GetComponent<tk2dAnimatedSprite>().CurrentClip.name.StartsWith("r"))
+                b.GetComponent<tk2dAnimatedSprite>().FlipX();
+            b.GetComponent<tk2dAnimatedSprite>().Play("fall");
+            b.GetComponent<Rabbit>().Stunned = true;
+        }
+
+        var heights = GetComponentsInChildren<Rabbit>().Select(_ => Random.Range(50.0f, 150)).ToArray();
+        var speeds = GetComponentsInChildren<Rabbit>().Select(_ => Random.Range(1, 2.5f)).ToArray();
 
         float t = 0;
         while (t < 1)
@@ -124,9 +136,15 @@ class Malisse : MonoBehaviour
             float step = Mathf.Pow(1 - t, 1.25f);
             Walker.DistanceFromStart -= Time.deltaTime * 30.0f * step;
 
-            Walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 75f;
+            Walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 70f;
 
-            //transform.position = new Vector3();
+            int i = 0;
+            foreach (var b in GetComponentsInChildren<Rabbit>())
+            {
+                b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
+                b.Walker.HeightOffset = Mathf.Sin(Mathf.Clamp01(t * speeds[i]) * Mathf.PI) * heights[i++] - 5.0f;
+            }
+
             yield return new WaitForEndOfFrame();
             t += Time.deltaTime;
         }
@@ -134,10 +152,20 @@ class Malisse : MonoBehaviour
         sprite.Play("timeout");
         Walker.HeightOffset = -75.0f;
 
+        foreach (var b in GetComponentsInChildren<Rabbit>())
+        {
+            b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
+            b.Walker.HeightOffset = -12.0f;
+        }
+
         yield return new WaitForSeconds(2.0f);
 
         Walker.HeightOffset = 0.0f;
-        sprite.Play(lastName);
+        foreach (var b in GetComponentsInChildren<Rabbit>())
+        {
+            b.Walker.HeightOffset = 0.0f;
+            b.GetComponent<Rabbit>().Stunned = false;
+        }
 
         Walker.Resume();
     }

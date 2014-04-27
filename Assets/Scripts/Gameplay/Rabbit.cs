@@ -5,10 +5,12 @@ using UnityEngine;
 class Rabbit : MonoBehaviour
 {
     Malisse parent;
-    RoadWalker walker;
     tk2dAnimatedSprite sprite;
 
     public float DistanceToMalisse;
+
+    public RoadWalker Walker { get; private set; }
+    public bool Stunned { get; set; }
 
     string[] PerAngleAnimationMap =
     {
@@ -28,11 +30,11 @@ class Rabbit : MonoBehaviour
 
         sprite = GetComponent<tk2dAnimatedSprite>();
         parent = transform.parent.GetComponent<Malisse>();
-        walker = GetComponent<RoadWalker>();
+        Walker = GetComponent<RoadWalker>();
 
-        walker.RoadToWalk = GameUtils.FindAssociatedLevel(transform).transform.Find("Road").GetComponent<Spline>();
+        Walker.RoadToWalk = GameUtils.FindAssociatedLevel(transform).transform.Find("Road").GetComponent<Spline>();
 
-        walker.Stop();
+        Walker.Stop();
 
         sinceDirectionReevaluated = 0.1f;
     }
@@ -43,9 +45,10 @@ class Rabbit : MonoBehaviour
 
     void Update()
     {
-        walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
+        Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
 
-        UpdateDirection();
+        if (!Stunned)
+            UpdateDirection();
     }
 
     void UpdateDirection()
