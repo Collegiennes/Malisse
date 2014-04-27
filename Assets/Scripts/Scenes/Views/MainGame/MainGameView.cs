@@ -13,15 +13,18 @@ public class MainGameView : View
 	private readonly Vector2 PLAYER_2_POSITION = new Vector2(150.0f, 0.0f);
 
 	// delegates
+	public delegate void OnSceneReady();
 
 	// enums
 	
 	// public
 	public Transform m_SceneAnchor = null;
+	public OnSceneReady m_OnSceneReadyCallback = null;
 	
 	// protected
 	
 	// private
+	private static MainGameView m_Instance = null;
 	private Dictionary<int, Hand> m_Hands = new Dictionary<int, Hand>();
 	private Level m_CurrentLevel = null;
 	private Level m_PreviousLevel = null;
@@ -30,6 +33,10 @@ public class MainGameView : View
 	private bool m_IsLoading = false;
 	
 	// properties
+	public static MainGameView Instance
+	{
+		get { return m_Instance; }
+	}
 	#endregion
 	
 	#region Unity API
@@ -46,6 +53,12 @@ public class MainGameView : View
 	}
 #endif
 
+	protected override void Awake()
+	{
+		m_Instance = this;
+
+		base.Awake();
+	}
 	#endregion
 
 	#region View Implementation
@@ -68,6 +81,20 @@ public class MainGameView : View
 	#endregion
 	
 	#region Public Methods
+	public void LoadNextLevel()
+	{
+		if (!m_IsLoading)
+		{
+			m_LevelIndex++;
+			if (m_LevelIndex >= m_LevelIds.Count)
+			{
+				m_LevelIndex = 0;
+			}
+			
+			StopCoroutine("LoadLevelAsync");
+			StartCoroutine("LoadLevelAsync");
+		}
+	}
 	#endregion
 	
 	#region Protected Methods
@@ -114,21 +141,6 @@ public class MainGameView : View
 		for (int i = 0; i < NB_LEVELS; ++i)
 		{
 			m_LevelIds.Insert(Random.Range(0, m_LevelIds.Count), i + 1);
-		}
-	}
-
-	private void LoadNextLevel()
-	{
-		if (!m_IsLoading)
-		{
-			m_LevelIndex++;
-			if (m_LevelIndex >= m_LevelIds.Count)
-			{
-				m_LevelIndex = 0;
-			}
-
-			StopCoroutine("LoadLevelAsync");
-			StartCoroutine("LoadLevelAsync");
 		}
 	}
 
@@ -200,6 +212,11 @@ public class MainGameView : View
 		LoadHand(2, PLAYER_2_POSITION);
 		
 		m_IsLoading = false;
+
+		if (m_OnSceneReadyCallback != null)
+		{
+			m_OnSceneReadyCallback();
+		}
 	}
 	#endregion
 }
