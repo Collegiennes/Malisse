@@ -41,7 +41,9 @@ class Malisse : MonoBehaviour
         if (MainGameView.Instance)
         {
             Walker.Stop();
-            Walker.OnPathDone = MainGameView.Instance.LoadNextLevel;
+
+            foreach (var r in GetComponentsInChildren<Rabbit>())
+                r.Walker.OnPathDone = CheckForNextLevel;
             MainGameView.Instance.m_OnSceneReadyCallback += Walker.Resume;
         }
     }
@@ -55,6 +57,16 @@ class Malisse : MonoBehaviour
         }
     }
 
+    void CheckForNextLevel()
+    {
+        bool done = true;
+        foreach (var r in GetComponentsInChildren<Rabbit>())
+            done &= r.Scattering || !r.renderer.enabled;
+
+        if (done)
+            MainGameView.Instance.LoadNextLevel();
+    }
+
     Vector3 lastPosition;
     Vector3 lastDirection;
 
@@ -62,6 +74,11 @@ class Malisse : MonoBehaviour
     {
         if (!Walker.Stopped)
             UpdateDirection();
+
+        var r = renderer;
+        r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
+        r = transform.Find("Shadow").renderer;
+        r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
     }
 
     void UpdateDirection()

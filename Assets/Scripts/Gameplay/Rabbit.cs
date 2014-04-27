@@ -57,6 +57,11 @@ class Rabbit : MonoBehaviour
         ScatterDestination = new Vector3(r.x, 0, r.y);
     }
 
+    void OnDestroy()
+    {
+        Walker.OnPathDone = null;
+    }
+
     void Update()
     {
         if (Scattering)
@@ -65,7 +70,7 @@ class Rabbit : MonoBehaviour
         {
             Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
             foreach (var r in GetComponentsInChildren<Renderer>())
-                r.enabled = Walker.DistanceFromStart > 0;
+                r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
         }
 
         if (!Stunned)

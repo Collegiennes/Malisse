@@ -14,6 +14,7 @@ class RoadWalker : MonoBehaviour
 
     public float HeightOffset { get; set; }
 
+    public bool Done { get; private set; }
     public Action OnPathDone;
 
     void Update()
@@ -29,6 +30,7 @@ class RoadWalker : MonoBehaviour
 
         if (done)
         {
+            Done = true;
             if (OnPathDone != null)
                 OnPathDone();
             return;
