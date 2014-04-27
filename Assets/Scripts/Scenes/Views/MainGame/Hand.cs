@@ -29,6 +29,7 @@ public class Hand : MonoBehaviour
 	private Camera m_HandCamera = null;
 	private float m_GoalHeight = 0.0f;
 	private float m_CurrentHeight = 0.0f;
+	private bool m_IsGrabbing = false;
 	
 	// properties
 	#endregion
@@ -41,6 +42,15 @@ public class Hand : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		// Height adjustment.
+		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, m_CurrentHeight);
+
+		// TODO technobeanie: Quick fix related to the grabbing feature problems.
+		if (m_CurrentHeight != GRABBED_OFFSET && m_CurrentHeight != RELEASED_OFFSET)
+		{
+			return;
+		}
+
 		// Movements.
 		Vector2 movement = Vector2.zero;
 
@@ -85,9 +95,6 @@ public class Hand : MonoBehaviour
 		{
 			StartCoroutine("ReleaseObstacle");
 		}
-		
-		// Height adjustment.
-		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, m_CurrentHeight);
 
 		// Look at.
 		transform.rotation = m_HandCamera.transform.rotation;
@@ -98,7 +105,25 @@ public class Hand : MonoBehaviour
 		ObstacleHandle handle = other.GetComponent<ObstacleHandle>();
 		if (m_HoveringObstacleHandle == null && handle != null)
 		{
-			m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandReadyAssetName);
+			if (!m_IsGrabbing)
+			{
+				m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandReadyAssetName);
+			}
+
+			m_HoveringObstacleHandle = handle;
+		}
+	}
+
+	private void OnTriggerStay(Collider other) 
+	{
+		ObstacleHandle handle = other.GetComponent<ObstacleHandle>();
+		if (m_HoveringObstacleHandle == null && handle != null)
+		{
+			if (!m_IsGrabbing)
+			{
+				m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandReadyAssetName);
+			}
+			
 			m_HoveringObstacleHandle = handle;
 		}
 	}
@@ -108,7 +133,11 @@ public class Hand : MonoBehaviour
 		ObstacleHandle handle = other.GetComponent<ObstacleHandle>();
 		if (handle != null && handle == m_HoveringObstacleHandle)
 		{
-			m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
+			if (!m_IsGrabbing)
+			{
+				m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
+			}
+
 			m_HoveringObstacleHandle = null;
 		}
 	}
@@ -124,45 +153,57 @@ public class Hand : MonoBehaviour
 	private void GrabObstacle()
 	{
 		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandGrabbedAssetName);
+		
+		if (m_IsGrabbing)
+		{
+			return;
+		}
+		
+		m_IsGrabbing = true;
 
 		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
-			// Move hand.
-			m_GoalHeight = GRABBED_OFFSET;
-			StopCoroutine("RaiseHand");
-			StartCoroutine("RaiseHand");
-
 			// Setup obstacle.
-			Vector3 newPosition = transform.position - (m_HoveringObstacleHandle.transform.position - m_HoveringObstacleHandle.m_Obstacle.transform.position);
+			/*Vector3 newPosition = transform.position + (m_HoveringObstacleHandle.transform.position - m_HoveringObstacleHandle.m_Obstacle.transform.position);
 			newPosition.y = m_HoveringObstacleHandle.m_Obstacle.transform.position.y;
-			m_HoveringObstacleHandle.m_Obstacle.transform.position = newPosition;
+			m_HoveringObstacleHandle.m_Obstacle.transform.position = newPosition;*/
 
 			m_GrabbedObstacleHandle = m_HoveringObstacleHandle;
 			m_GrabbedObstacleHandle.OnGrabbed();
 
 			m_GrabbedObstacleJoin = gameObject.AddComponent<HingeJoint>();
 			m_GrabbedObstacleJoin.connectedBody = m_HoveringObstacleHandle.m_Obstacle.rigidbody;
-			m_GrabbedObstacleJoin.anchor = m_HoveringObstacleHandle.transform.localPosition;
+			//m_GrabbedObstacleJoin.anchor = m_HoveringObstacleHandle.transform.localPosition;
+			
+			// Move hand.
+			m_GoalHeight = GRABBED_OFFSET;
+			StopCoroutine("RaiseHand");
+			StartCoroutine("RaiseHand");
 		}
 	}
 	
 	private IEnumerator ReleaseObstacle()
 	{
-		if (m_GrabbedObstacleJoin != null)
+		if (m_IsGrabbing)
 		{
-			m_GrabbedObstacleHandle.OnReleased();
-			m_GrabbedObstacleHandle = null;
+			m_IsGrabbing = false;
 
-			Destroy(m_GrabbedObstacleJoin);
-			m_GrabbedObstacleJoin = null;
-			
-			yield return null;
+			if (m_GrabbedObstacleJoin != null)
+			{
+				m_GrabbedObstacleHandle.OnReleased();
+				m_GrabbedObstacleHandle = null;
 
-			m_GoalHeight = RELEASED_OFFSET;
-			StopCoroutine("RaiseHand");
-			StartCoroutine("RaiseHand");
+				Destroy(m_GrabbedObstacleJoin);
+				m_GrabbedObstacleJoin = null;
+				
+				yield return null;
+
+				m_GoalHeight = RELEASED_OFFSET;
+				StopCoroutine("RaiseHand");
+				StartCoroutine("RaiseHand");
+			}
 		}
-		
+			
 		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
 	}
 
