@@ -7,6 +7,7 @@ class ResizableShadow : MonoBehaviour
     Transform actualParent;
 
     public Transform CustomParent;
+    public Vector2 SizeFactor = Vector2.one;
 
     Vector3 baseScale;
 
@@ -30,8 +31,8 @@ class ResizableShadow : MonoBehaviour
             var length = (parentCollider as MeshCollider).bounds.size.x;
             var depth = (parentCollider as MeshCollider).bounds.size.z;
 
-            transform.localScale = new Vector3(length / actualParent.localScale.x / actualParent.parent.localScale.x,
-                                               depth / actualParent.localScale.y / actualParent.parent.localScale.y,
+            transform.localScale = new Vector3(length / actualParent.localScale.x / actualParent.parent.localScale.x * SizeFactor.x,
+                                               depth / actualParent.localScale.y / actualParent.parent.localScale.y * SizeFactor.y,
                                                1);
         }
 

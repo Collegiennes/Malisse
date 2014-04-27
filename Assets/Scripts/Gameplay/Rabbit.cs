@@ -43,6 +43,8 @@ class Rabbit : MonoBehaviour
     void Update()
     {
         Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
+        foreach (var r in GetComponentsInChildren<Renderer>())
+            r.enabled = Walker.DistanceFromStart > 0;
 
         if (!Stunned)
             UpdateDirection();
