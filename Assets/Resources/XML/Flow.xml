@@ -38,9 +38,9 @@ Parameters (in action or view):
 		
 		<action name="GO_TO_MAIN_GAME" viewId="MAIN_GAME">
 			<!-- For Testing purpose only -->
-			<!--
-			<parameter name="LEVEL_ID">4</parameter>
-			-->
+			
+			<parameter name="LEVEL_ID">7</parameter>
+			
 		</action>
 	</view>
 	
