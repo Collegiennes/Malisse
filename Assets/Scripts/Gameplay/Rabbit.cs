@@ -72,6 +72,19 @@ class Rabbit : MonoBehaviour
 		
 		if (!Stunned)
 			UpdateDirection();
+
+		{
+			// readjust height based on ground raycast
+			RaycastHit hit;
+			if (Physics.SphereCast(new Ray(transform.position + Vector3.up * 1080, Vector3.down), 25, out hit, 2160,
+			                       1 << LayerMask.NameToLayer("WalkableObject")))
+			{
+				parent.RefreshWalkableCollider(hit.collider);
+				Walker.GroundHeight = hit.point.y;
+			}
+			else
+				Walker.GroundHeight = Mathf.Max(Walker.GroundHeight - Time.deltaTime * 500.0f, 0.0f);
+		}
 	}
 	
 	void UpdateDirection()

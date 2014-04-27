@@ -164,6 +164,8 @@ public class Hand : MonoBehaviour
 				GameObject joint = new GameObject("Join");
 				joint.transform.position = hitPoint;
 				joint.transform.parent = transform;
+
+				transform.gameObject.layer = LayerMask.NameToLayer("Default");
 				
 				m_GrabbedObstacleJoin = joint.AddComponent<HingeJoint>();
 				m_GrabbedObstacleJoin.rigidbody.useGravity = false;

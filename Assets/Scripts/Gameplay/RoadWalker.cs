@@ -13,6 +13,7 @@ public class RoadWalker : MonoBehaviour
     public bool Stopped { get; private set; }
 
     public float HeightOffset { get; set; }
+	public float GroundHeight { get; set; }
 
     public bool Done { get; private set; }
     public Action OnPathDone;
@@ -36,7 +37,7 @@ public class RoadWalker : MonoBehaviour
             return;
         }
 
-        var destinationPosition = new Vector3(worldPos.x, worldPos.y + HeightOffset, worldPos.z);
+		var destinationPosition = new Vector3(worldPos.x, worldPos.y + HeightOffset + GroundHeight, worldPos.z);
 
         transform.position = destinationPosition;
         CurrentDirection = curDir.normalized;

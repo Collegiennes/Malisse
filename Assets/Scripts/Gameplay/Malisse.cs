@@ -13,6 +13,21 @@ public class Malisse : MonoBehaviour
 	public float m_DistanceBetweenCharacters = 5.0f;
 	
 	private List<Rabbit> m_Rabbits = new List<Rabbit>();
+
+	public class FloatHolder
+	{
+		public float Value;
+
+		public static implicit operator float(FloatHolder d)
+		{
+			return d.Value;
+		}
+		public static implicit operator FloatHolder(float d)
+		{
+			return new FloatHolder { Value = d };
+		}
+	}
+	public Dictionary<Collider, FloatHolder> walkableRefreshList = new Dictionary<Collider, FloatHolder>();
 	
     tk2dAnimatedSprite sprite;
 
@@ -44,6 +59,8 @@ public class Malisse : MonoBehaviour
         Walker.Step();
         UpdateDirection();
 
+	    transform.Find("RotatedCollider").gameObject.layer = LayerMask.NameToLayer("Player");
+
         if (MainGameView.Instance)
         {
             Walker.Stop();
@@ -73,6 +90,8 @@ public class Malisse : MonoBehaviour
     Vector3 lastPosition;
     Vector3 lastDirection;
 
+	List<Collider> toClear = new List<Collider>(); 
+
     void Update()
     {
         if (!Walker.Stopped)
@@ -82,7 +101,42 @@ public class Malisse : MonoBehaviour
         r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
         r = transform.Find("Shadow").renderer;
         r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
+
+		// time-expire walkables
+	    toClear.Clear();
+		foreach (var kvp in walkableRefreshList)
+		{
+			kvp.Value.Value += Time.deltaTime;
+			if (kvp.Value > 0.25f)
+				toClear.Add(kvp.Key);
+		}
+	    foreach (var c in toClear)
+	    {
+			Debug.Log("Reverting walkable object " + c.gameObject.name);
+			c.gameObject.layer = LayerMask.NameToLayer("Default");
+		    walkableRefreshList.Remove(c);
+	    }
+
+	    // readjust height based on ground raycast
+		RaycastHit hit;
+		if (Physics.SphereCast(new Ray(transform.position + Vector3.up * 1080, Vector3.down), 50, out hit, 2160, 1 << LayerMask.NameToLayer("WalkableObject")))
+		{
+			Walker.GroundHeight = hit.point.y;
+			RefreshWalkableCollider(hit.collider);
+		}
+		else
+			Walker.GroundHeight = Mathf.Max(Walker.GroundHeight - Time.deltaTime * 500.0f, 0.0f);
     }
+
+	public void RefreshWalkableCollider(Collider c)
+	{
+		if (walkableRefreshList.ContainsKey(c))
+			walkableRefreshList[c].Value = 0;
+		else
+		{
+			Debug.Log("Could not find walkable collider " + c.gameObject.name);
+		}
+	}
 
     void UpdateDirection()
     {
@@ -119,23 +173,39 @@ public class Malisse : MonoBehaviour
 //            var preMove = Physics.Raycast(transform.position - Vector3.up * 1080, Vector3.down, out preHit);
 //            var postMove = Physics.Raycast(destinationPosition - Vector3.up * 1080, Vector3.down, out postHit);
 
-            Debug.Log(info.contacts.Count() + " contacts");
+            //Debug.Log(info.contacts.Count() + " contacts");
             var point = info.contacts.First(x => x.otherCollider.transform.gameObject.layer != LayerMask.NameToLayer("Ground")).point;
 
-            //point = transform.position + (point - transform.position).normalized * 5;
-            
-            RaycastHit preHit, postHit;
-            preHit = Physics.RaycastAll(new Ray(point + Vector3.up * 1080, Vector3.down), 2160).First(x => x.transform.gameObject.name != "RotatedCollider");
-            postHit = Physics.RaycastAll(new Ray(transform.position + Vector3.up * 1080, Vector3.down), 2160).First(x => x.transform.gameObject.name != "RotatedCollider");
+            var postPoint = point + (point - transform.Find("RotatedCollider").position).normalized * 10;
 
-            var heightDiff = postHit.point.y - preHit.point.y;
-            Debug.Log("Heightdiff for " + gameObject.name + ": " + heightDiff);
+			RaycastHit postHit;
 
-            StartCoroutine(JumpBackAndStartle());
+			var postResults = Physics.RaycastAll(new Ray(postPoint + Vector3.up * 1080, Vector3.down), 2160,
+	                                             (1 << LayerMask.NameToLayer("Default")) | (1 << LayerMask.NameToLayer("Ground")));
+
+	        float heightDiff = 0;
+	        if (postResults.Length > 0)
+	        {
+				postHit = postResults.OrderBy(x => x.distance).First();
+
+		        heightDiff = postHit.point.y - Walker.GroundHeight;
+		        Debug.Log("Heightdiff for " + gameObject.name + ": " + heightDiff + " to " + postHit.collider.gameObject.name);
+
+				if (postHit.collider.gameObject.name != "BG" && heightDiff <= 25 && !walkableRefreshList.ContainsKey(postHit.collider))
+		        {
+			        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
+					walkableRefreshList.Add(postHit.collider, 0);
+		        }
+	        }
+	        else
+		        Debug.Log("No hit!!");
+
+			if (heightDiff > 25)
+				StartCoroutine(JumpBackAndStartle());
         }
     }
 
-    IEnumerator JumpBackAndStartle()
+	IEnumerator JumpBackAndStartle()
     {
         var lastName = sprite.CurrentClip.name;
         if (lastName == "walk_rs")
