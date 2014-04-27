@@ -8,8 +8,14 @@ public class GameUtils
 	// constants
 	
 	// enums
-	
+	public enum eGameMode
+	{
+		ONE_PLAYER,
+		TWO_PLAYER
+	}
+
 	// public
+	public static eGameMode m_GameMode = eGameMode.ONE_PLAYER;
 	
 	// protected
 	

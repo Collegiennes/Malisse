@@ -19,17 +19,21 @@ public class MainMenuView : AlisseView
 	#endregion
 	
 	#region Unity API
-	protected override void Update()
+	#endregion
+
+	#region View Implementation
+	public override void HandleAction(FlowActionData actionData)
 	{
-		base.Update();
-
-		if (m_State != eState.OPENED)
+		if (actionData.ActionName == "CHOOSE_ONE_PLAYER")
 		{
-			return;
+			GameUtils.m_GameMode = GameUtils.eGameMode.ONE_PLAYER;
+			FlowManager.Instance.TriggerAction("GO_TO_MAIN_GAME");
 		}
-
-		if (ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.GRAB.ToString()).Count > 0)
+		else if (actionData.ActionName == "CHOOSE_TWO_PLAYER")
 		{
+			ControllerInputManager.Instance.AddMouseController();
+
+			GameUtils.m_GameMode = GameUtils.eGameMode.TWO_PLAYER;
 			FlowManager.Instance.TriggerAction("GO_TO_MAIN_GAME");
 		}
 	}
