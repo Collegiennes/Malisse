@@ -79,6 +79,8 @@ public class MainGameView : AlisseView
 		index = Random.Range(0, m_HandAssetNames.Count);
 		m_Hand2Assets = m_HandAssetNames[index];
 		m_HandAssetNames.RemoveAt(index);
+
+		CameraController.Instance.Reset();
 	}
 	#endregion
 

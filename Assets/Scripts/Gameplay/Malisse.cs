@@ -158,17 +158,24 @@ public class Malisse : MonoBehaviour
 			b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
 			b.Walker.HeightOffset = -12.0f;
 		}
-		
+
 		yield return new WaitForSeconds(2.0f);
 		
-		Walker.HeightOffset = 0.0f;
-		foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
+		if (GetComponentsInChildren<Rabbit>().Length > 0)
 		{
-			b.Walker.HeightOffset = 0.0f;
-			b.GetComponent<Rabbit>().Stunned = false;
+			Walker.HeightOffset = 0.0f;
+			foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
+			{
+				b.Walker.HeightOffset = 0.0f;
+				b.GetComponent<Rabbit>().Stunned = false;
+			}
+			
+			Walker.Resume();
 		}
-		
-		Walker.Resume();
+		else
+		{
+			FlowManager.Instance.TriggerAction("GAME_OVER");
+		}
 	}
 	
 	public void AddRabbit()

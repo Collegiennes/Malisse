@@ -46,5 +46,6 @@ Parameters (in action or view):
 	
 	<view id="MAIN_GAME" name="MainGame">
 		<action name="LOSE_RABBIT" viewId="MAIN_GAME"/>
+		<action name="GAME_OVER" viewId="MAIN_MENU"/>
 	</view>
 </flow>
