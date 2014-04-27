@@ -82,10 +82,15 @@ public class MainGameView : View
 			GameObject handObj = GameObject.Instantiate(handPrefab) as GameObject;
 			handObj.transform.parent = m_CurrentLevel.transform;
 			handObj.transform.localPosition = new Vector3(localPosition.x, localPosition.y, handObj.transform.localPosition.z);
+			handObj.transform.localEulerAngles = Vector3.zero;
 
 			Hand hand = handObj.GetComponent<Hand>();
+			if (hand != null)
+			{
+				hand.LevelBounds = m_CurrentLevel.m_Bounds;
 
-			m_Hands.Add(playerId, hand);
+				m_Hands.Add(playerId, hand);
+			}
 		}
 	}
 
