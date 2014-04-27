@@ -24,9 +24,7 @@ class Rabbit : MonoBehaviour
 
     void Awake()
     {
-        var camGO = GameObject.Find("MainCamera");
-        if (camGO)
-            transform.rotation = camGO.transform.rotation;
+        transform.localRotation = Quaternion.identity;
 
         sprite = GetComponent<tk2dAnimatedSprite>();
         parent = transform.parent.GetComponent<Malisse>();
