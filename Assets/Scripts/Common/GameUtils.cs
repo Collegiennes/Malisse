@@ -39,6 +39,20 @@ public class GameUtils
 		
 		return view;
 	}
+    public static Level FindAssociatedLevel(Transform current)
+    {
+        Level level = null;
+        if (current != null)
+        {
+            level = current.gameObject.GetComponent<Level>();
+            if (level == null)
+            {
+                level = FindAssociatedLevel(current.parent);
+            }
+        }
+
+        return level;
+    }
 	#endregion
 	
 	#region Protected Functions

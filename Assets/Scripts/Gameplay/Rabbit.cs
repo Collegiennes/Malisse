@@ -30,6 +30,8 @@ class Rabbit : MonoBehaviour
         parent = transform.parent.GetComponent<Malisse>();
         walker = GetComponent<RoadWalker>();
 
+        walker.RoadToWalk = GameUtils.FindAssociatedLevel(transform).transform.Find("Road").GetComponent<Spline>();
+
         walker.Stop();
 
         sinceDirectionReevaluated = 0.1f;

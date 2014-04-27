@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 [ExecuteInEditMode]
-class Spline : MonoBehaviour
+public class Spline : MonoBehaviour
 {
     public float SegmentRate = 0.5f;
     public float Width = 0.5f;

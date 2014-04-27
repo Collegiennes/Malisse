@@ -29,6 +29,8 @@ class Malisse : MonoBehaviour
         Walker = GetComponent<RoadWalker>();
         sprite = GetComponent<tk2dAnimatedSprite>();
 
+        Walker.RoadToWalk = GameUtils.FindAssociatedLevel(transform).transform.Find("Road").GetComponent<Spline>();
+
         Walker.Step();
         lastPosition = transform.position;
         Walker.Step();
