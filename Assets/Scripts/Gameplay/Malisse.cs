@@ -109,7 +109,12 @@ class Malisse : MonoBehaviour
 
         sprite.Play("fall");
 
-        foreach (var b in GetComponentsInChildren<Rabbit>())
+        // Scatter farthest one!
+        var toScatter = GetComponentsInChildren<Rabbit>().OrderBy(x => x.DistanceToMalisse).Last();
+        if (toScatter.DistanceToMalisse > 0)
+            toScatter.Scatter();
+
+        foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
         {
             if (b.GetComponent<tk2dAnimatedSprite>().CurrentClip.name.StartsWith("r"))
                 b.GetComponent<tk2dAnimatedSprite>().FlipX();
@@ -129,7 +134,7 @@ class Malisse : MonoBehaviour
             Walker.HeightOffset = Mathf.Sin(t * Mathf.PI) * 200.0f - 70f;
 
             int i = 0;
-            foreach (var b in GetComponentsInChildren<Rabbit>())
+            foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
             {
                 b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
                 b.Walker.HeightOffset = Mathf.Sin(Mathf.Clamp01(t * speeds[i]) * Mathf.PI) * heights[i++] - 5.0f;
@@ -142,7 +147,7 @@ class Malisse : MonoBehaviour
         sprite.Play("timeout");
         Walker.HeightOffset = -75.0f;
 
-        foreach (var b in GetComponentsInChildren<Rabbit>())
+        foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
         {
             b.GetComponent<tk2dAnimatedSprite>().Play("timeout", Random.Range(0, 1.0f));
             b.Walker.HeightOffset = -12.0f;
@@ -151,7 +156,7 @@ class Malisse : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         Walker.HeightOffset = 0.0f;
-        foreach (var b in GetComponentsInChildren<Rabbit>())
+        foreach (var b in GetComponentsInChildren<Rabbit>().Where(x => !x.Scattering))
         {
             b.Walker.HeightOffset = 0.0f;
             b.GetComponent<Rabbit>().Stunned = false;

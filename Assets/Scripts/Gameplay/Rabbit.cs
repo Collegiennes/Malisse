@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 class Rabbit : MonoBehaviour
 {
+    const float ScatterSpeed = 400.0f;
+
     Malisse parent;
     tk2dAnimatedSprite sprite;
 
@@ -11,6 +14,9 @@ class Rabbit : MonoBehaviour
 
     public RoadWalker Walker { get; private set; }
     public bool Stunned { get; set; }
+    public bool Scattering { get; private set; }
+
+    Vector3 ScatterDestination;
 
     string[] PerAngleAnimationMap =
     {
@@ -40,11 +46,25 @@ class Rabbit : MonoBehaviour
     Vector3 lastPosition;
     Vector3 lastDirection;
 
+    public void Scatter()
+    {
+        transform.parent = transform.parent.parent;
+
+        Scattering = true;
+        Walker.enabled = false;
+
+        var r = Random.insideUnitCircle;
+        ScatterDestination = new Vector3(r.x, 0, r.y);
+    }
+
     void Update()
     {
         Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
         foreach (var r in GetComponentsInChildren<Renderer>())
             r.enabled = Walker.DistanceFromStart > 0;
+
+        if (Scattering)
+            transform.position += ScatterDestination * Time.deltaTime * ScatterSpeed;
 
         if (!Stunned)
             UpdateDirection();
@@ -66,6 +86,9 @@ class Rabbit : MonoBehaviour
         if (lastName != animName)
         {
             sprite.Play(animName);
+
+            if (Scattering)
+                sprite.ClipFps = 17;
 
             if ((animName.StartsWith("r") && !lastName.StartsWith("r")) || (lastName.StartsWith("r") && !animName.StartsWith("r")))
             {
