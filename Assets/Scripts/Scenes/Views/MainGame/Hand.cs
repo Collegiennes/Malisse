@@ -113,6 +113,10 @@ public class Hand : MonoBehaviour
 	#endregion
 	
 	#region Public Methods
+	public void SetDefaultAsset()
+	{
+		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
+	}
 	#endregion
 	
 	#region Protected Methods
@@ -194,9 +198,9 @@ public class Hand : MonoBehaviour
 				StopCoroutine("RaiseHand");
 				StartCoroutine("RaiseHand");
 			}
+
+			m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
 		}
-			
-		m_Asset.spriteId = m_Asset.GetSpriteIdByName(m_HandEmptyAssetName);
 	}
 
 	private IEnumerator RaiseHand()

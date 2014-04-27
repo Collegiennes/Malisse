@@ -2,6 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class HandAssetNames
+{
+	public string m_HandHoverName = "";
+	public string m_HandGrabbedName = "";
+	public string m_HandIdleName = "";
+}
+
 public class MainGameView : AlisseView 
 {
 	#region Members and properties
@@ -19,6 +27,8 @@ public class MainGameView : AlisseView
 	// public
 	public Transform m_SceneAnchor = null;
 	public int m_NbLevels = 3;
+	public List<HandAssetNames> m_HandAssetNames = new List<HandAssetNames>();
+
 	public OnSceneReady m_OnSceneReadyCallback = null;
 	
 	// protected
@@ -31,6 +41,8 @@ public class MainGameView : AlisseView
 	private List<int> m_LevelIds = new List<int>();
 	private int m_LevelIndex = -1;
 	private bool m_IsLoading = false;
+	private HandAssetNames m_Hand1Assets = null;
+	private HandAssetNames m_Hand2Assets = null;
 	
 	// properties
 	public static MainGameView Instance
@@ -58,6 +70,14 @@ public class MainGameView : AlisseView
 		m_Instance = this;
 
 		base.Awake();
+
+		int index = Random.Range(0, m_HandAssetNames.Count);
+		m_Hand1Assets = m_HandAssetNames[index];
+		m_HandAssetNames.RemoveAt(index);
+
+		index = Random.Range(0, m_HandAssetNames.Count);
+		m_Hand2Assets = m_HandAssetNames[index];
+		m_HandAssetNames.RemoveAt(index);
 	}
 	#endregion
 
@@ -101,7 +121,7 @@ public class MainGameView : AlisseView
 	#endregion
 	
 	#region Private Methods
-	private void LoadHand(int playerId, Vector2 localPosition)
+	private void LoadHand(int playerId, Vector2 localPosition, HandAssetNames assetNames)
 	{
 		GameObject handPrefab = Resources.Load(string.Format(HAND_PLAYER_PREFAB_PATH, playerId.ToString())) as GameObject;
 		if (handPrefab != null)
@@ -115,6 +135,11 @@ public class MainGameView : AlisseView
 			if (hand != null)
 			{
 				hand.LevelBounds = m_CurrentLevel.m_Bounds;
+				
+				hand.m_HandEmptyAssetName = assetNames.m_HandIdleName;
+				hand.m_HandGrabbedAssetName = assetNames.m_HandGrabbedName;
+				hand.m_HandReadyAssetName = assetNames.m_HandHoverName;
+				hand.SetDefaultAsset();
 
 				m_Hands.Add(playerId, hand);
 			}
@@ -208,8 +233,8 @@ public class MainGameView : AlisseView
 			Destroy(m_PreviousLevel.gameObject);
 		}
 
-		LoadHand(1, PLAYER_1_POSITION);
-		LoadHand(2, PLAYER_2_POSITION);
+		LoadHand(1, PLAYER_1_POSITION, m_Hand1Assets);
+		LoadHand(2, PLAYER_2_POSITION, m_Hand2Assets);
 		
 		m_IsLoading = false;
 
