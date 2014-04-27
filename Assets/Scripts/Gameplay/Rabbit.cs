@@ -12,21 +12,19 @@ class Rabbit : MonoBehaviour
 
     string[] PerAngleAnimationMap =
     {
-        "lb", //"b",
-        "lb", //"rb", // inverted
-        "lb", //"rs", // inverted
-        "lb", //"rf", // inverted
-        "lf", //"f",
+        "b", 
+        "rb", 
+        "rs", 
+        "rf", 
+        "f", 
         "lf", 
-        "lf", //"ls", 
+        "ls", 
         "lb", 
     };
 
     void Awake()
     {
-        var camGO = GameObject.Find("MainCamera");
-        if (camGO)
-            transform.rotation = camGO.transform.rotation;
+        transform.localRotation = Quaternion.identity;
 
         sprite = GetComponent<tk2dAnimatedSprite>();
         parent = transform.parent.GetComponent<Malisse>();
@@ -65,16 +63,14 @@ class Rabbit : MonoBehaviour
             //Debug.Log("Angle : " + angle + " | Index = " + index);
 
             var animName = PerAngleAnimationMap[index];
-            var lastName = sprite.CurrentClip == null ? "" : sprite.CurrentClip.name;
+            var lastName = sprite.CurrentClip == null ? " " : sprite.CurrentClip.name;
             if (lastName != animName)
             {
                 sprite.Play(animName);
 
-                if (animName.EndsWith("rs") || lastName.EndsWith("rs"))
+                if ((animName.StartsWith("r") && !lastName.StartsWith("r")) || (lastName.StartsWith("r") && !animName.StartsWith("r")))
                 {
-                    //Debug.Log("name = " + animName);
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * (animName.EndsWith("rs") ? -1 : 1),
-                                                       transform.localScale.y, transform.localScale.z);
+                    sprite.FlipX();
                 }
             }
         }
