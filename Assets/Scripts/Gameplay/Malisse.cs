@@ -9,11 +9,11 @@ class Malisse : MonoBehaviour
     {
         "walk_b",
         "walk_rb",
-        "walk_rf", // walk_r
+        "walk_rs", // walk_ls * -1
         "walk_rf", 
         "walk_f",
         "walk_lf", 
-        "walk_lf", // walk_l
+        "walk_ls", // walk_ls
         "walk_lb", 
     };
 
@@ -48,8 +48,18 @@ class Malisse : MonoBehaviour
             //Debug.Log("Angle : " + angle + " | Index = " + index);
 
             var animName = PerAngleAnimationMap[index];
-            if (sprite.CurrentClip.name != animName)
+            var lastName = sprite.CurrentClip.name;
+            if (lastName != animName)
+            {
                 sprite.Play(animName);
+
+                if (animName == "walk_rs" || lastName == "walk_rs")
+                {
+                    //Debug.Log("name = " + animName);
+                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * (animName == "walk_rs" ? -1 : 1),
+                                                       transform.localScale.y, transform.localScale.z);
+                }
+            }
         }
     }
 }
