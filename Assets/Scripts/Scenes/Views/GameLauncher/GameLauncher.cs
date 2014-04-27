@@ -23,7 +23,7 @@ public class GameLauncher : MonoBehaviour
 	{
 		Screen.showCursor = false;
 
-		FlowManager.Instance.TriggerAction("GO_TO_MAIN_MENU");
+		FlowManager.Instance.TriggerAction("BEGIN");
 
 		ControllerInputManager.Instance.Init();
 	}
