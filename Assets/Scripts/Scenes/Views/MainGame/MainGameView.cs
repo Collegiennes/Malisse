@@ -254,7 +254,7 @@ public class MainGameView : AlisseView
 		// Destroy previous.
 		if (m_PreviousLevel != null)
 		{
-			Destroy(m_PreviousLevel.gameObject);
+			DestroyImmediate(m_PreviousLevel.gameObject);
 		}
 
 		LoadHand(1, PLAYER_1_POSITION, m_Hand1Assets);

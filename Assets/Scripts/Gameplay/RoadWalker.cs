@@ -8,6 +8,7 @@ public class RoadWalker : MonoBehaviour
 {
     public Spline RoadToWalk;
     public float Speed = 1;
+	public AudioClip m_SFXWalk = null;
 
     public float DistanceFromStart { get; set; }
     public bool Stopped { get; private set; }
@@ -42,18 +43,34 @@ public class RoadWalker : MonoBehaviour
         CurrentDirection = curDir.normalized;
     }
 
+	private void OnDestroy()
+	{
+		AudioManager.Instance.StopLoopingSFX(m_SFXWalk);
+		m_SFXWalk = null;
+	}
+
     public void Step()
     {
         Update();
     }
 
     public void Stop()
-    {
+	{
+		if (m_SFXWalk != null)
+		{
+			AudioManager.Instance.StopLoopingSFX(m_SFXWalk);
+		}
+
         Stopped = true;
     }
 
     public void Resume()
-    {
+	{
+		if (m_SFXWalk != null)
+		{
+			AudioManager.Instance.PlayLoopingSFX(m_SFXWalk);
+		}
+
         Stopped = false;
     }
 
