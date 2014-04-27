@@ -21,7 +21,9 @@ public class GameLauncher : MonoBehaviour
 	#region Unity API
 	private void Start () 
 	{
-		FlowManager.Instance.TriggerAction("GO_TO_MAIN_GAME");
+		Screen.showCursor = false;
+
+		FlowManager.Instance.TriggerAction("GO_TO_MAIN_MENU");
 
 		ControllerInputManager.Instance.Init();
 	}

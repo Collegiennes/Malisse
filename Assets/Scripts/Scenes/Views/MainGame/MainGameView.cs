@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MainGameView : View 
+public class MainGameView : AlisseView 
 {
 	#region Members and properties
 	// constants
