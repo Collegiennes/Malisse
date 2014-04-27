@@ -1,13 +1,19 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-class Malisse : MonoBehaviour
+public class Malisse : MonoBehaviour
 {
+	private const string RABBIT_PATH = "Prefabs/Malisse/Rabbit";
+	
     public RoadWalker Walker;
-
+	public float m_DistanceBetweenCharacters = 5.0f;
+	
+	private List<Rabbit> m_Rabbits = new List<Rabbit>();
+	
     tk2dAnimatedSprite sprite;
 
     string[] PerAngleAnimationMap =
@@ -197,4 +203,21 @@ class Malisse : MonoBehaviour
 
         Walker.Resume();
     }
+
+	public void AddRabbit()
+	{
+		GameObject rabbitPrefab = Resources.Load(RABBIT_PATH) as GameObject;
+		if (rabbitPrefab != null)
+		{
+			GameObject rabbitObj = GameObject.Instantiate(rabbitPrefab) as GameObject;
+			rabbitObj.transform.parent = transform;
+			
+			Rabbit rabbit = rabbitObj.GetComponent<Rabbit>();
+			if (rabbit != null)
+			{
+				rabbit.DistanceToMalisse = (m_DistanceBetweenCharacters * (m_Rabbits.Count + 1));
+				m_Rabbits.Add(rabbit);
+			}
+		}
+	}    
 }

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class RoadWalker : MonoBehaviour
+public class RoadWalker : MonoBehaviour
 {
     public Spline RoadToWalk;
     public float Speed = 1;

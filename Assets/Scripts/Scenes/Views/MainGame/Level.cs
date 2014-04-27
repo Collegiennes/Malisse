@@ -12,6 +12,7 @@ public class Level : MonoBehaviour
 	// enums
 	
 	// public
+	public Malisse m_Malisse = null;
 	public Collider m_Bounds = null;
 	
 	// protected
@@ -25,10 +26,22 @@ public class Level : MonoBehaviour
 	private void Awake()
 	{
 		BuildWalls();
+
+		if (m_Malisse == null)
+		{
+			m_Malisse = gameObject.GetComponentInChildren<Malisse>();
+		}
 	}
 	#endregion
 	
 	#region Public Methods
+	public void AddRabbit()
+	{
+		if (m_Malisse != null)
+		{
+			m_Malisse.AddRabbit();
+		}
+	}
 	#endregion
 
 	#region Protected Methods
