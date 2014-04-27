@@ -8,7 +8,6 @@ class RoadWalker : MonoBehaviour
 {
     public Spline RoadToWalk;
     public float Speed = 1;
-    public float Delay = 0;
 
     public float DistanceFromStart { get; set; }
     public bool Stopped { get; private set; }
@@ -20,12 +19,6 @@ class RoadWalker : MonoBehaviour
     void Update()
     {
         if (!RoadToWalk) return;
-
-        if (Delay > 0)
-        {
-            Delay -= Time.deltaTime;
-            return;
-        }
 
         if (!Stopped)
             DistanceFromStart += Speed * Time.deltaTime * 5.0f;

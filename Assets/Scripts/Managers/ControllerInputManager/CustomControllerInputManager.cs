@@ -10,7 +10,10 @@ public partial class ControllerInputManager
 	// enums
 	public enum eButtonAliases
 	{
-		GRAB
+		NONE,
+		GRAB,
+		CHARACTER_1_GRAB,
+		CHARACTER_2_GRAB
 	}
 	
 	// public
@@ -33,29 +36,28 @@ public partial class ControllerInputManager
 	#region ControllerInputManager Implementation
 	partial void PostInputDetection()
 	{
-		AddMouseController();
-
 		// Aliases.
 		SetAliases();
 	}
 	#endregion
 	
 	#region Public Functions
+	public void AddMouseController()
+	{
+		MouseController controller = new MouseController();
+		m_MouseControllerId = ControllerInputManager.Instance.AddController(controller);
+	}
 	#endregion
 	
 	#region Protected Functions
 	#endregion
 	
 	#region Private Functions
-	private void AddMouseController()
-	{
-		MouseController controller = new MouseController();
-		m_MouseControllerId = ControllerInputManager.Instance.AddController(controller);
-	}
-
 	private void SetAliases()
 	{
 		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.A, eButtonAliases.GRAB.ToString());
+		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.L1, eButtonAliases.CHARACTER_1_GRAB.ToString());
+		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.R1, eButtonAliases.CHARACTER_2_GRAB.ToString());
 	}
 	#endregion
 }

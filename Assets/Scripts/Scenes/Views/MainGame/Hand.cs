@@ -56,49 +56,13 @@ public class Hand : MonoBehaviour
 			return;
 		}
 
-		// Movements.
-		Vector2 movement = Vector2.zero;
-
-		Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
-		// Detect a controller.
-		if (movements.ContainsKey(m_ControllerId))
+		if (GameUtils.m_GameMode == GameUtils.eGameMode.ONE_PLAYER)
 		{
-			movement = movements[m_ControllerId];
-		}
-		// Mouse is player 1.
-		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
-		         ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
-		         movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
-		{
-			movement = movements[ControllerInputManager.Instance.MouseControllerId];
-		}
-
-		if (movement != Vector2.zero)
-		{
-			float weightFactor = 1.0f;
-			if (m_GrabbedObstacleJoin != null && m_GrabbedObstacleHandle != null)
-			{
-				weightFactor = m_GrabbedObstacleHandle.m_Obstacle.FullWeightFactor;
-			}
-
-			movement.x *= Time.deltaTime * SPEED.x * weightFactor;
-			movement.y *= Time.deltaTime * SPEED.y * weightFactor;
-
-			Vector3 newMovement = /*Quaternion.Euler(m_HandCamera.transform.eulerAngles) */ new Vector3(movement.x, 0.0f, movement.y);
-			transform.position += newMovement;
-		}
-
-		// Buttons (controllers and mouse)
-		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
-		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
-				 ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
-				 ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
-		{
-			GrabObstacle();
+			HandleOnePlayerMode();
 		}
 		else
 		{
-			StartCoroutine("ReleaseObstacle");
+			HandleTwoPlayerMode();
 		}
 
 		// Look at.
@@ -243,6 +207,105 @@ public class Hand : MonoBehaviour
 			m_CurrentHeight = Mathf.Lerp(oldHeight, m_GoalHeight, ratio);
 
 			yield return null;
+		}
+	}
+
+	private void HandleOnePlayerMode()
+	{
+		// Movements.
+		Vector2 movement = Vector2.zero;
+
+		if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01)
+		{
+			Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
+			foreach (Vector2 movementTemp in movements.Values)
+			{
+				movement = movementTemp;
+				break;
+			}
+		}
+		else
+		{
+			Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetRightJoystick();
+			foreach (Vector2 movementTemp in movements.Values)
+			{
+				movement = movementTemp;
+				break;
+			}
+		}
+
+		if (movement != Vector2.zero)
+		{
+			float weightFactor = 1.0f;
+			if (m_GrabbedObstacleJoin != null && m_GrabbedObstacleHandle != null)
+			{
+				weightFactor = m_GrabbedObstacleHandle.m_Obstacle.FullWeightFactor;
+			}
+			
+			movement.x *= Time.deltaTime * SPEED.x * weightFactor;
+			movement.y *= Time.deltaTime * SPEED.y * weightFactor;
+			
+			Vector3 newMovement = /*Quaternion.Euler(m_HandCamera.transform.eulerAngles) */ new Vector3(movement.x, 0.0f, movement.y);
+			transform.position += newMovement;
+		}
+		
+		// Buttons (controllers)
+		if ((m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_1_GRAB.ToString()).Count > 0) || 
+		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_02 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_2_GRAB.ToString()).Count > 0))
+		{
+			GrabObstacle();
+		}
+		else
+		{
+			StartCoroutine("ReleaseObstacle");
+		}
+	}
+
+	private void HandleTwoPlayerMode()
+	{
+		// Movements.
+		Vector2 movement = Vector2.zero;
+		
+		Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
+		// Detect a controller.
+		if (movements.ContainsKey(m_ControllerId))
+		{
+			movement = movements[m_ControllerId];
+		}
+		// Mouse is player 1.
+		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+		         ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+		         movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
+		{
+			movement = movements[ControllerInputManager.Instance.MouseControllerId];
+		}
+		
+		if (movement != Vector2.zero)
+		{
+			float weightFactor = 1.0f;
+			if (m_GrabbedObstacleJoin != null && m_GrabbedObstacleHandle != null)
+			{
+				weightFactor = m_GrabbedObstacleHandle.m_Obstacle.FullWeightFactor;
+			}
+			
+			movement.x *= Time.deltaTime * SPEED.x * weightFactor;
+			movement.y *= Time.deltaTime * SPEED.y * weightFactor;
+			
+			Vector3 newMovement = /*Quaternion.Euler(m_HandCamera.transform.eulerAngles) */ new Vector3(movement.x, 0.0f, movement.y);
+			transform.position += newMovement;
+		}
+		
+		// Buttons (controllers and mouse)
+		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
+		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
+			 ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
+			 ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
+		{
+			GrabObstacle();
+		}
+		else
+		{
+			StartCoroutine("ReleaseObstacle");
 		}
 	}
 	#endregion
