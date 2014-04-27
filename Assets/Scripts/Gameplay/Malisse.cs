@@ -105,18 +105,20 @@ public class Malisse : MonoBehaviour
 
 		// time-expire walkables
 	    toClear.Clear();
-		foreach (var kvp in walkableRefreshList)
+//		if (walkableRefreshList.Count > 0)
+//			Debug.Log(walkableRefreshList.Count + " walkables");
+		foreach (var k in walkableRefreshList.Keys)
 		{
-			kvp.Value.Value += Time.deltaTime;
-			if (kvp.Value > 0.25f)
-				toClear.Add(kvp.Key);
+			var v = walkableRefreshList[k];
+
+			v.Value += Time.deltaTime;
+//			Debug.Log(k.gameObject.name + " has life of " + v);
+
+			if (v > 0.25f)
+				toClear.Add(k);
 		}
 	    foreach (var c in toClear)
-	    {
-			Debug.Log("Reverting walkable object " + c.gameObject.name);
-			c.gameObject.layer = LayerMask.NameToLayer("Default");
-		    walkableRefreshList.Remove(c);
-	    }
+			RevertWalkableCollider(c);
 
 	    // readjust height based on ground raycast
 		RaycastHit hit;
@@ -137,6 +139,13 @@ public class Malisse : MonoBehaviour
 		{
 			Debug.Log("Could not find walkable collider " + c.gameObject.name);
 		}
+	}
+
+	public void RevertWalkableCollider(Collider c)
+	{
+		Debug.Log("Reverting walkable object " + c.gameObject.name);
+		c.gameObject.layer = LayerMask.NameToLayer("Default");
+		walkableRefreshList.Remove(c);
 	}
 
     void UpdateDirection()
@@ -197,6 +206,9 @@ public class Malisse : MonoBehaviour
 			        postHit.collider.gameObject.layer = LayerMask.NameToLayer("WalkableObject");
 					walkableRefreshList.Add(postHit.collider, 0);
 		        }
+
+		        if (postHit.collider.gameObject.GetComponent<Obstacle>().m_GrabbedHandleCount > 0)
+			        heightDiff = 10000;
 	        }
 	        else
 		        Debug.Log("No hit!!");

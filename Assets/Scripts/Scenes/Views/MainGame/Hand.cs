@@ -176,8 +176,8 @@ public class Hand : MonoBehaviour
 				joint.transform.position = hitPoint;
 				joint.transform.parent = transform;
 
-				transform.gameObject.layer = LayerMask.NameToLayer("Default");
-				
+				GameUtils.FindAssociatedLevel(transform).m_Malisse.RevertWalkableCollider(m_HoveringObstacleHandle.m_Obstacle.collider);
+
 				m_GrabbedObstacleJoin = joint.AddComponent<HingeJoint>();
 				m_GrabbedObstacleJoin.rigidbody.useGravity = false;
 				m_GrabbedObstacleJoin.rigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;

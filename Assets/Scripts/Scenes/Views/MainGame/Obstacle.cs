@@ -16,7 +16,7 @@ public class Obstacle : Observer
 	// protected
 	
 	// private
-	private int m_GrabbedHandleCount = 0;
+	public int m_GrabbedHandleCount = 0;
 	
 	// properties
 	public float FullWeightFactor
