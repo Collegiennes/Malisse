@@ -9,6 +9,7 @@ public class ControllerButtonManager : Observer
 	private const float DOT_PRODUCT_MIN = 0.75f;
 
 	// public
+	public List<ControllerButton> m_ControllerButtons = new List<ControllerButton>();
 
 	// protected
 	protected ControllerButton m_SelectedButton;
@@ -43,6 +44,16 @@ public class ControllerButtonManager : Observer
 	#endregion
 
 	#region Unity API
+	protected override void Awake()
+	{
+		foreach (ControllerButton button in m_ControllerButtons)
+		{
+			m_SubjectList.Add(button);
+		}
+
+		base.Awake();
+	}
+
 	protected virtual void Update()
 	{
 		if (m_IsActive)
@@ -120,7 +131,11 @@ public class ControllerButtonManager : Observer
 			else
 			{
 				Dictionary<ControllerInputManager.eControllerId, Vector2> leftJoysticks = ControllerInputManager.Instance.GetLeftJoystick();
-				leftJoystick = leftJoysticks.Count > 0 ? leftJoysticks[0] : Vector2.zero;
+				foreach (Vector2 movement in leftJoysticks.Values)
+				{
+					leftJoystick = movement;
+					break;
+				}
 			}
 			
 			if (leftJoystick == Vector2.zero)
