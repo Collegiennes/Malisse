@@ -17,6 +17,9 @@ class Rabbit : MonoBehaviour
 	public bool Scattering { get; private set; }
 	
 	Vector3 ScatterDestination;
+
+	string lastAnimCheck;
+	float sinceLastAnimChanged;
 	
 	string[] PerAngleAnimationMap =
 	{
@@ -69,9 +72,14 @@ class Rabbit : MonoBehaviour
 			foreach (var r in GetComponentsInChildren<Renderer>())
                 r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
 		}
-		
+
 		if (!Stunned)
+		{
+			sinceLastAnimChanged += Time.deltaTime;
+			if (lastAnimCheck != null && sinceLastAnimChanged > 0.25f)
+				lastAnimCheck = null;
 			UpdateDirection();
+		}
 
 		{
 			// readjust height based on ground raycast
@@ -100,7 +108,7 @@ class Rabbit : MonoBehaviour
 		
 		var animName = PerAngleAnimationMap[index];
 		var lastName = sprite.CurrentClip == null ? " " : sprite.CurrentClip.name;
-		if (lastName != animName)
+		if (lastName != animName && (lastAnimCheck == null || lastAnimCheck != animName))
 		{
 			sprite.Play(animName);
 			
@@ -111,6 +119,9 @@ class Rabbit : MonoBehaviour
 			{
 				sprite.FlipX();
 			}
+
+			lastAnimCheck = lastName;
+			sinceLastAnimChanged = 0;
 		}
 	}
 }
