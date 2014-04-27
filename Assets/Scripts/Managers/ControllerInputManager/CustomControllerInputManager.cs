@@ -13,7 +13,8 @@ public partial class ControllerInputManager
 		NONE,
 		GRAB,
 		CHARACTER_1_GRAB,
-		CHARACTER_2_GRAB
+		CHARACTER_2_GRAB,
+		START
 	}
 	
 	// public
@@ -58,6 +59,7 @@ public partial class ControllerInputManager
 		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.A, eButtonAliases.GRAB.ToString());
 		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.L1, eButtonAliases.CHARACTER_1_GRAB.ToString());
 		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.R1, eButtonAliases.CHARACTER_2_GRAB.ToString());
+		AddButtonAlias((BaseController.eButtonId)Xbox360Controller.eXbox360ButtonId.START, eButtonAliases.START.ToString());
 	}
 	#endregion
 }

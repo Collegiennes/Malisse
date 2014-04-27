@@ -22,19 +22,23 @@ Parameters (in action or view):
 ********************************* -->
 <flow viewDepth="100" overlayOffset="1" loadingMinDuration="0.5">
 	<!-- Global Actions -->
+	<action name="BEGIN" viewId="SPLASH_SCREEN">
+	</action>
+	
 	<action name="GO_TO_MAIN_MENU" viewId="MAIN_MENU">
 	</action>
 	
 	<!-- View -->
+	<view id="SPLASH_SCREEN" name="SplashScreen">
+	</view>
+	
 	<view id="MAIN_MENU" name="MainMenu">
 		<action name="CHOOSE_ONE_PLAYER" viewId="MAIN_MENU"/>
 		<action name="CHOOSE_TWO_PLAYER" viewId="MAIN_MENU"/>
 		
 		<action name="GO_TO_MAIN_GAME" viewId="MAIN_GAME">
 			<!-- For Testing purpose only -->
-			<!--
-			<parameter name="LEVEL_ID">1</parameter>
-			-->
+			<parameter name="LEVEL_ID">4</parameter>
 		</action>
 	</view>
 	

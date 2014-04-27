@@ -6,7 +6,6 @@ public class TextureControllerButton : ControllerButton
 {
 	#region Members and Properties
 	// constants
-	private readonly Color BUTTON_OUT_COLOR = new Color(0.5f, 0.5f, 0.5f, 1.0f);
 	
 	// enums
 	
@@ -19,7 +18,6 @@ public class TextureControllerButton : ControllerButton
 	// protected
 	
 	// private
-	private Color m_InitialColor = Color.white;
 	
 	// properties
 	#endregion

@@ -8,7 +8,6 @@ public class MainGameView : AlisseView
 	// constants
 	private const string HAND_PLAYER_PREFAB_PATH = "Prefabs/Hands/HandPlayer{0}";
 	private const string LEVEL_NAME = "Level{0}";
-	private const int NB_LEVELS = 3;
 	private readonly Vector2 PLAYER_1_POSITION = new Vector2(-150.0f, 0.0f);
 	private readonly Vector2 PLAYER_2_POSITION = new Vector2(150.0f, 0.0f);
 
@@ -19,6 +18,7 @@ public class MainGameView : AlisseView
 	
 	// public
 	public Transform m_SceneAnchor = null;
+	public int m_NbLevels = 3;
 	public OnSceneReady m_OnSceneReadyCallback = null;
 	
 	// protected
@@ -138,7 +138,7 @@ public class MainGameView : AlisseView
 	private void LoadLevelList()
 	{
 		m_LevelIds.Clear();
-		for (int i = 0; i < NB_LEVELS; ++i)
+		for (int i = 0; i < m_NbLevels; ++i)
 		{
 			m_LevelIds.Insert(Random.Range(0, m_LevelIds.Count), i + 1);
 		}
