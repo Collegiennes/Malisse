@@ -223,7 +223,7 @@ public class Malisse : MonoBehaviour
 	        else
 		        Debug.Log("No hit!!");
 
-			if (heightDiff > 25)
+			if (heightDiff > 40)
 			{
 				StartCoroutine(JumpBackAndStartle());
 				AudioManager.Instance.PlaySFX(m_SFXEfforts);
