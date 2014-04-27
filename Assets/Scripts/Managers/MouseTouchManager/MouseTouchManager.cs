@@ -42,7 +42,7 @@ public class MouseTouchManager : MonoBehaviour
 		}
 		
 		m_Instance = this;
-		m_Camera = Camera.main;
+		m_Camera = CameraController.Instance.m_GUICamera;
 	}
 	
 	private void Update() 
