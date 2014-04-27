@@ -13,6 +13,7 @@ public class SplashScreenView : AlisseView
 	public float m_MinDelay = 0.5f;
 	public float m_MaxDelay = 3.0f;
 	public AudioClip m_SFXClick = null;
+	public AudioClip m_Music = null;
 	
 	// protected
 	
@@ -23,6 +24,11 @@ public class SplashScreenView : AlisseView
 	#endregion
 	
 	#region Unity API
+	private void Start()
+	{
+		AudioManager.Instance.PlayMusic(m_Music);
+	}
+
 	protected override void Update()
 	{
 		base.Update();

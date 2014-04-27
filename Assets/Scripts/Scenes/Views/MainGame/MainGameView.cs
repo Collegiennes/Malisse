@@ -31,6 +31,7 @@ public class MainGameView : AlisseView
 
 	public OnSceneReady m_OnSceneReadyCallback = null;
 	public int m_NbRabbits = 5;
+	public AudioClip m_Music = null;
 	
 	// protected
 	
@@ -81,6 +82,11 @@ public class MainGameView : AlisseView
 		m_HandAssetNames.RemoveAt(index);
 
 		CameraController.Instance.Reset();
+	}
+
+	private void Start()
+	{
+		AudioManager.Instance.PlayMusic(m_Music);
 	}
 	#endregion
 
