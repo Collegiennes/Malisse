@@ -11,6 +11,8 @@ public class GameOverView : AlisseView
 	
 	// public
 	public float m_MinDelay = 0.5f;
+	public AudioClip m_SFXClick = null;
+	public AudioClip m_Music = null;
 	
 	// protected
 	
@@ -25,6 +27,11 @@ public class GameOverView : AlisseView
 	#endregion
 	
 	#region Unity API
+	private void Start()
+	{
+		AudioManager.Instance.PlayMusic(m_Music);
+	}
+
 	protected override void Update()
 	{
 		base.Update();
@@ -39,6 +46,8 @@ public class GameOverView : AlisseView
 			if (ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.GRAB.ToString()).Count > 0 || 
 			    ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.START.ToString()).Count > 0)
 			{
+				AudioManager.Instance.PlaySFX(m_SFXClick);
+
 				FlowManager.Instance.TriggerAction("GO_TO_MAIN_MENU");
 			}
 		}

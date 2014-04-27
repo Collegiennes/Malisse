@@ -11,6 +11,7 @@ public class MainMenuView : AlisseView
 	
 	// public
 	public float m_MinDelay = 0.5f;
+	public AudioClip m_Music = null;
 	
 	// protected
 	
@@ -26,6 +27,11 @@ public class MainMenuView : AlisseView
 	#endregion
 	
 	#region Unity API
+	private void Start()
+	{
+		AudioManager.Instance.PlayMusic(m_Music);
+	}
+
 	protected override void Update()
 	{
 		base.Update();
@@ -37,11 +43,7 @@ public class MainMenuView : AlisseView
 
 		if (m_CurrentCountdown > m_MinDelay)
 		{
-			if (ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.GRAB.ToString()).Count > 0 || 
-			    ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.START.ToString()).Count > 0)
-			{
-				m_SceneReady = true;
-			}
+			m_SceneReady = true;
 		}
 		else
 		{

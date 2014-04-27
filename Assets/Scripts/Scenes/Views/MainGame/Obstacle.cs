@@ -11,6 +11,7 @@ public class Obstacle : Observer
 	
 	// public
 	public float m_WeightFactorPerHandle = 1.0f;
+	public List<AudioClip> m_SFXHit = new List<AudioClip>();
 	
 	// protected
 	
@@ -26,8 +27,16 @@ public class Obstacle : Observer
 		}
 	}
 	#endregion
-	
+
 	#region Unity API
+	private void OnCollisionEnter(Collision collision) 
+	{
+		if (collision.relativeVelocity.magnitude > 200.0f)
+		{
+			float volume = AnimationController.GetInterpolationRatio(200.0f, 2000.0f, collision.relativeVelocity.magnitude, AnimationController.EaseInOutType.Linear);
+			AudioManager.Instance.PlaySFX(m_SFXHit, volume);
+		}
+	}
 	#endregion
 
 	#region Observer Implementation

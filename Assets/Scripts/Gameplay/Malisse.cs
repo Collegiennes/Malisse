@@ -11,6 +11,7 @@ public class Malisse : MonoBehaviour
 	
     public RoadWalker Walker;
 	public float m_DistanceBetweenCharacters = 5.0f;
+	public List<AudioClip> m_SFXEfforts = new List<AudioClip>();
 	
 	private List<Rabbit> m_Rabbits = new List<Rabbit>();
 
@@ -41,7 +42,7 @@ public class Malisse : MonoBehaviour
         "walk_lf", 
         "walk_ls", // walk_ls
         "walk_lb", 
-    };
+	};
 
     void Awake()
     {
@@ -69,7 +70,7 @@ public class Malisse : MonoBehaviour
     }
 
     void OnDestroy()
-    {
+	{
         if (MainGameView.Instance)
         {
             Walker.OnPathDone = null;
@@ -201,7 +202,10 @@ public class Malisse : MonoBehaviour
 		        Debug.Log("No hit!!");
 
 			if (heightDiff > 25)
+			{
 				StartCoroutine(JumpBackAndStartle());
+				AudioManager.Instance.PlaySFX(m_SFXEfforts);
+			}
         }
     }
 

@@ -19,6 +19,9 @@ public class Hand : MonoBehaviour
 	public string m_HandGrabbedAssetName = "";
 	public string m_HandEmptyAssetName = "";
 	public string m_HandReadyAssetName = "";
+	public List<AudioClip> m_SFXGrab = new List<AudioClip>();
+	public List<AudioClip> m_SFXCantGrab = new List<AudioClip>();
+	public AudioClip m_SFXHoldGrab = null;
 
 	// protected
 	
@@ -43,6 +46,11 @@ public class Hand : MonoBehaviour
 	private void Awake()
 	{
 		m_HandCamera = GameObject.Find("HandCamera").GetComponent<Camera>();
+	}
+
+	private void OnDestroy()
+	{
+		AudioManager.Instance.StopLoopingSFX(m_SFXHoldGrab);
 	}
 
 	private void FixedUpdate()
@@ -136,6 +144,9 @@ public class Hand : MonoBehaviour
 
 		if (m_HoveringObstacleHandle != null && !m_HoveringObstacleHandle.IsGrabbed && m_GrabbedObstacleJoin == null)
 		{
+			AudioManager.Instance.PlaySFX(m_SFXGrab);
+			AudioManager.Instance.PlayLoopingSFX(m_SFXHoldGrab);
+
 			// Find hit point.
 			Vector3 handHitPosition = transform.position - (CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward) * 2000.0f);
 			RaycastHit[] hits = Physics.SphereCastAll(handHitPosition, (collider as CapsuleCollider).radius, CameraController.Instance.m_HandCamera.transform.TransformDirection(Vector3.forward));
@@ -178,6 +189,10 @@ public class Hand : MonoBehaviour
 				StartCoroutine("RaiseHand");
 			}
 		}
+		else
+		{
+			AudioManager.Instance.PlaySFX(m_SFXCantGrab);
+		}
 	}
 	
 	private IEnumerator ReleaseObstacle()
@@ -188,6 +203,8 @@ public class Hand : MonoBehaviour
 
 			if (m_GrabbedObstacleJoin != null)
 			{
+				AudioManager.Instance.StopLoopingSFX(m_SFXHoldGrab);
+
 				m_GrabbedObstacleHandle.OnReleased();
 				m_GrabbedObstacleHandle = null;
 

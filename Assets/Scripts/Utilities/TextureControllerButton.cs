@@ -14,6 +14,7 @@ public class TextureControllerButton : ControllerButton
 	public string m_UpSpriteName = null;
 	public string m_DownSpriteName = null;
 	public string m_HoverSpriteName = null;
+	public AudioClip m_SFXClick = null;
 	
 	// protected
 	
@@ -32,7 +33,9 @@ public class TextureControllerButton : ControllerButton
 	public override void OnTouchOver(TouchEvent touchEvent)
 	{
 		base.OnTouchOver(touchEvent);
-		
+
+		AudioManager.Instance.PlaySFX(m_SFXClick);
+
 		if (m_Sprite != null)
 		{
 			m_Sprite.spriteId = m_Sprite.GetSpriteIdByName(m_HoverSpriteName);
@@ -66,6 +69,11 @@ public class TextureControllerButton : ControllerButton
 	
 	public override void OnTouchUp(TouchEvent touchEvent)
 	{
+		if (!string.IsNullOrEmpty(m_ActionName))
+		{
+			AudioManager.Instance.PlaySFX(m_SFXClick);
+		}
+
 		base.OnTouchUp(touchEvent);
 
 		if (m_IsOver)
