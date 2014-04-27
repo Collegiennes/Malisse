@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -67,7 +67,7 @@ class Rabbit : MonoBehaviour
 		{
 			Walker.DistanceFromStart = parent.Walker.DistanceFromStart - DistanceToMalisse;
 			foreach (var r in GetComponentsInChildren<Renderer>())
-				r.enabled = Walker.DistanceFromStart > 0;
+                r.enabled = Walker.DistanceFromStart > 0 && !Walker.Done;
 		}
 		
 		if (!Stunned)

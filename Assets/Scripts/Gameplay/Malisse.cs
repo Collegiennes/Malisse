@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +47,6 @@ public class Malisse : MonoBehaviour
         if (MainGameView.Instance)
         {
             Walker.Stop();
-
-            foreach (var r in GetComponentsInChildren<Rabbit>())
-                r.Walker.OnPathDone = CheckForNextLevel;
             MainGameView.Instance.m_OnSceneReadyCallback += Walker.Resume;
         }
     }
@@ -67,10 +64,10 @@ public class Malisse : MonoBehaviour
     {
         bool done = true;
         foreach (var r in GetComponentsInChildren<Rabbit>())
-            done &= r.Scattering || !r.renderer.enabled;
+            done &= r.Scattering || r.Walker.Done;
 
         if (done)
-            MainGameView.Instance.LoadNextLevel();
+            MainGameView.Instance.LoadNextLevel(false);
     }
 
     Vector3 lastPosition;
@@ -216,6 +213,7 @@ public class Malisse : MonoBehaviour
 			if (rabbit != null)
 			{
 				rabbit.DistanceToMalisse = (m_DistanceBetweenCharacters * (m_Rabbits.Count + 1));
+                rabbit.GetComponent<RoadWalker>().OnPathDone = CheckForNextLevel;
 				m_Rabbits.Add(rabbit);
 			}
 		}
