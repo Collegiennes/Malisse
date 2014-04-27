@@ -4,6 +4,9 @@ class ResizableShadow : MonoBehaviour
 {
     Transform camTransform;
     Collider parentCollider;
+    Transform actualParent;
+
+    public Transform CustomParent;
 
     Vector3 baseScale;
 
@@ -13,7 +16,8 @@ class ResizableShadow : MonoBehaviour
         if (camGO)
             camTransform = camGO.transform;
 
-        parentCollider = transform.parent.collider;
+        actualParent = CustomParent ? CustomParent : transform.parent;
+        parentCollider = actualParent.collider;
 
         if (parentCollider is BoxCollider)
         {
@@ -26,8 +30,8 @@ class ResizableShadow : MonoBehaviour
             var length = (parentCollider as MeshCollider).bounds.size.x;
             var depth = (parentCollider as MeshCollider).bounds.size.z;
 
-            transform.localScale = new Vector3(length / transform.parent.localScale.x / transform.parent.parent.localScale.x,
-                                               depth / transform.parent.localScale.y / transform.parent.parent.localScale.y,
+            transform.localScale = new Vector3(length / actualParent.localScale.x / actualParent.parent.localScale.x,
+                                               depth / actualParent.localScale.y / actualParent.parent.localScale.y,
                                                1);
         }
 
@@ -41,13 +45,13 @@ class ResizableShadow : MonoBehaviour
         transform.localPosition = Vector3.zero;
         transform.position = new Vector3(transform.position.x, 0, transform.position.z) - camFwd * 200;
 
-        var height = Mathf.Max(transform.parent.position.y, 1);
+        var height = Mathf.Max(actualParent.position.y, 1);
         float distance = Mathf.Clamp01(1 - height / 475.0f);
         transform.localScale = baseScale * distance;
 
         renderer.material.color = new Color(1, 1, 1, Mathf.Pow(distance, 1.125f));
 
-        if (transform.parent.GetComponent<tk2dAnimatedSprite>() == null)
+        if (actualParent.GetComponent<tk2dAnimatedSprite>() == null)
             transform.rotation = Quaternion.Euler(90, 0, 0);
         else
             transform.rotation = Quaternion.identity;

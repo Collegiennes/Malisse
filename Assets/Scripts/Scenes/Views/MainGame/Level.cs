@@ -55,7 +55,8 @@ public class Level : MonoBehaviour
 
 		if (lookAt)
 		{
-			wall.transform.rotation = CameraController.Instance.m_MainCamera.transform.rotation * Quaternion.AngleAxis(-90, Vector3.right);
+            if (CameraController.Instance)
+			    wall.transform.rotation = CameraController.Instance.m_MainCamera.transform.rotation * Quaternion.AngleAxis(-90, Vector3.right);
 		}
 	}
 	#endregion

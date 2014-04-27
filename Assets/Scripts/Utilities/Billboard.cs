@@ -6,10 +6,17 @@ using UnityEngine;
 
 class Billboard : MonoBehaviour
 {
+    public bool Inverse;
+
     void Awake()
     {
         var camGO = GameObject.Find("MainCamera");
         if (camGO)
-            transform.rotation = camGO.transform.rotation;
+        {
+            if (Inverse)
+                transform.localRotation = Quaternion.Inverse(camGO.transform.rotation);
+            else
+                transform.rotation = camGO.transform.rotation;
+        }
     }
 }
