@@ -44,6 +44,7 @@ class Malisse : MonoBehaviour
     void OnDestroy()
     {
         walker.OnPathDone = null;
+        MainGameView.Instance.m_OnSceneReadyCallback -= walker.Resume;
     }
 
     Vector3 lastPosition;
