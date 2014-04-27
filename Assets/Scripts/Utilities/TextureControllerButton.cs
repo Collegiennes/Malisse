@@ -33,7 +33,9 @@ public class TextureControllerButton : ControllerButton
 	public override void OnTouchOver(TouchEvent touchEvent)
 	{
 		base.OnTouchOver(touchEvent);
-		
+
+		AudioManager.Instance.PlaySFX(m_SFXClick);
+
 		if (m_Sprite != null)
 		{
 			m_Sprite.spriteId = m_Sprite.GetSpriteIdByName(m_HoverSpriteName);

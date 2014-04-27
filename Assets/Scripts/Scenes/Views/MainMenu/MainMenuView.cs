@@ -43,11 +43,7 @@ public class MainMenuView : AlisseView
 
 		if (m_CurrentCountdown > m_MinDelay)
 		{
-			if (ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.GRAB.ToString()).Count > 0 || 
-			    ControllerInputManager.Instance.GetButtonDown(ControllerInputManager.eButtonAliases.START.ToString()).Count > 0)
-			{
-				m_SceneReady = true;
-			}
+			m_SceneReady = true;
 		}
 		else
 		{
