@@ -28,7 +28,7 @@ public class AlisseView : View
 		
 		if (Input.GetKeyUp(KeyCode.Escape))
 		{
-			Application.Quit();
+			FlowManager.Instance.TriggerAction("GO_TO_MAIN_MENU");
 		}
 	}
 	#endregion

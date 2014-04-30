@@ -131,6 +131,16 @@ public partial class ControllerInputManager
 
 		return eControllerId.NONE;
 	}
+
+	public bool RemoveController(ControllerInputManager.eControllerId controllerId)
+	{
+		if (m_Controllers.ContainsKey(controllerId))
+		{
+			return m_Controllers.Remove(controllerId);
+		}
+
+		return false;
+	}
 	
 	public Dictionary<ControllerInputManager.eControllerId, Vector2> GetDPad()
 	{

@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>D:/softwares/utilities/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>D:/softwares/utilities/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +73,8 @@
      <Compile Include="Assets\OtherResources\TK2DROOT\tk2d\Code\TileMap\tk2dTileMapMeshBuilder.cs" />
      <Compile Include="Assets\Scripts\Common\GameUtils.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Malisse.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Rabbit.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\ResizableShadow.cs" />
      <Compile Include="Assets\Scripts\Gameplay\RoadWalker.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Spline.cs" />
      <Compile Include="Assets\Scripts\Gameplay\SplineNode.cs" />
@@ -118,18 +120,27 @@
      <Compile Include="Assets\Scripts\Managers\Observer\Subject.cs" />
      <Compile Include="Assets\Scripts\Managers\Observer\SubjectObserver.cs" />
      <Compile Include="Assets\Scripts\Managers\TouchManager\TouchManager.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\GameLauncher\AlisseView.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\GameLauncher\CameraController.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\GameLauncher\GameLauncher.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\GameOver\GameOverView.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\MainGame\CharacterController.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\MainGame\Hand.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\MainGame\Level.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\MainGame\MainGameView.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\MainGame\Obstacle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Views\MainGame\ObstacleHandle.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\MainMenu\MainMenuView.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Views\SplashScreen\SplashScreenView.cs" />
      <Compile Include="Assets\Scripts\Utilities\AnimationController.cs" />
+     <Compile Include="Assets\Scripts\Utilities\Billboard.cs" />
      <Compile Include="Assets\Scripts\Utilities\ColoredControllerButton.cs" />
      <Compile Include="Assets\Scripts\Utilities\EditorOnly.cs" />
+     <Compile Include="Assets\Scripts\Utilities\GainBias.cs" />
      <Compile Include="Assets\Scripts\Utilities\ISerializable.cs" />
      <Compile Include="Assets\Scripts\Utilities\MathfPlus.cs" />
      <Compile Include="Assets\Scripts\Utilities\TextBubble.cs" />
+     <Compile Include="Assets\Scripts\Utilities\TextureControllerButton.cs" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\LitSolidVertexColor.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\SolidVertexColor.shader" />
      <None Include="Assets\Resources\Shaders\Neverpants-CameraFogOfWar.shader" />
@@ -138,10 +149,12 @@
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\Blend2TexVertexColor.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\BlendVertexColor.shader" />
      <None Include="Assets\Resources\Shaders\Neverpants-Color.shader" />
+     <None Include="Assets\Resources\Shaders\Neverpants-ColorUnlitTextureAlwaysOnTopForReal.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\LitCutoutVertexColor.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\CutoutVertexColor.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\LitBlendVertexColor.shader" />
      <None Include="Assets\Resources\Shaders\Neverpants-ColorUnlitTexture.shader" />
+     <None Include="Assets\Resources\Shaders\Neverpants-ColorUnlitTextureAlwaysOnTop.shader" />
      <None Include="Assets\OtherResources\TK2DROOT\tk2d\Shaders\AdditiveVertexColor.shader" />
      <None Include="Assets\Resources\XML\Flow.xml" />
   </ItemGroup>

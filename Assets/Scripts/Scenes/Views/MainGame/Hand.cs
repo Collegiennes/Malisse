@@ -15,6 +15,7 @@ public class Hand : MonoBehaviour
 	
 	// public
 	public ControllerInputManager.eControllerId m_ControllerId = ControllerInputManager.eControllerId.CONTROLLER_01;
+	public CharacterController.ePlayerId m_PlayerId = CharacterController.ePlayerId.PLAYER_1;
 	public tk2dSprite m_Asset = null;
 	public string m_HandGrabbedAssetName = "";
 	public string m_HandEmptyAssetName = "";
@@ -249,7 +250,7 @@ public class Hand : MonoBehaviour
 		// Movements.
 		Vector2 movement = Vector2.zero;
 
-		if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01)
+		if (m_PlayerId == CharacterController.ePlayerId.PLAYER_1)
 		{
 			Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
 			foreach (Vector2 movementTemp in movements.Values)
@@ -284,8 +285,8 @@ public class Hand : MonoBehaviour
 		}
 		
 		// Buttons (controllers)
-		if ((m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_1_GRAB.ToString()).Count > 0) || 
-		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_02 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_2_GRAB.ToString()).Count > 0))
+		if ((m_PlayerId == CharacterController.ePlayerId.PLAYER_1 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_1_GRAB.ToString()).Count > 0) || 
+		    (m_PlayerId == CharacterController.ePlayerId.PLAYER_2 && ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.CHARACTER_2_GRAB.ToString()).Count > 0))
 		{
 			GrabObstacle();
 		}
@@ -301,17 +302,13 @@ public class Hand : MonoBehaviour
 		Vector2 movement = Vector2.zero;
 		
 		Dictionary<ControllerInputManager.eControllerId, Vector2> movements = ControllerInputManager.Instance.GetLeftJoystick();
-		// Detect a controller.
-		if (movements.ContainsKey(m_ControllerId))
+		foreach (ControllerInputManager.eControllerId controllerId in movements.Keys)
 		{
-			movement = movements[m_ControllerId];
-		}
-		// Mouse is player 1.
-		else if (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
-		         ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
-		         movements.ContainsKey(ControllerInputManager.Instance.MouseControllerId))
-		{
-			movement = movements[ControllerInputManager.Instance.MouseControllerId];
+			if (CharacterController.Instance.IsPlayerController(m_PlayerId, controllerId))
+			{
+				movement = movements[controllerId];
+				break;
+			}
 		}
 		
 		if (movement != Vector2.zero)
@@ -325,15 +322,24 @@ public class Hand : MonoBehaviour
 			movement.x *= Time.deltaTime * SPEED.x * weightFactor;
 			movement.y *= Time.deltaTime * SPEED.y * weightFactor;
 			
-			Vector3 newMovement = /*Quaternion.Euler(m_HandCamera.transform.eulerAngles) */ new Vector3(movement.x, 0.0f, movement.y);
+			Vector3 newMovement = new Vector3(movement.x, 0.0f, movement.y);
 			transform.position += newMovement;
 		}
 		
 		// Buttons (controllers and mouse)
-		if (ControllerInputManager.Instance.GetButton(m_ControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString()) || 
-		    (m_ControllerId == ControllerInputManager.eControllerId.CONTROLLER_01 && 
-			 ControllerInputManager.Instance.MouseControllerId != ControllerInputManager.eControllerId.CONTROLLER_02 && 
-			 ControllerInputManager.Instance.GetButton(ControllerInputManager.Instance.MouseControllerId, ControllerInputManager.eButtonAliases.GRAB.ToString())))
+		List<ControllerInputManager.eControllerId> controllers = ControllerInputManager.Instance.GetButton(ControllerInputManager.eButtonAliases.GRAB.ToString());
+		bool buttonPressed = false;
+
+		foreach (ControllerInputManager.eControllerId controllerId in controllers)
+		{
+			if (CharacterController.Instance.IsPlayerController(m_PlayerId, controllerId))
+			{
+				buttonPressed = true;
+				break;
+			}
+		}
+
+		if (buttonPressed)
 		{
 			GrabObstacle();
 		}

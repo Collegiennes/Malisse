@@ -29,6 +29,15 @@ public class MainMenuView : AlisseView
 	#region Unity API
 	private void Start()
 	{
+		if (ControllerInputManager.Instance.Keyboard2ControllerId == ControllerInputManager.eControllerId.NONE)
+		{
+			ControllerInputManager.Instance.AddKeyboard2Controller();
+		}
+		if (ControllerInputManager.Instance.MouseControllerId == ControllerInputManager.eControllerId.NONE)
+		{
+			ControllerInputManager.Instance.AddMouseController();
+		}
+
 		AudioManager.Instance.PlayMusic(m_Music);
 	}
 
@@ -59,13 +68,18 @@ public class MainMenuView : AlisseView
 		{
 			if (actionData.ActionName == "CHOOSE_ONE_PLAYER")
 			{
+				// Remove if single player only.
+				ControllerInputManager.Instance.RemoveController(ControllerInputManager.Instance.Keyboard2ControllerId);
+				ControllerInputManager.Instance.Keyboard2ControllerId = ControllerInputManager.eControllerId.NONE;
+
+				ControllerInputManager.Instance.RemoveController(ControllerInputManager.Instance.MouseControllerId);
+				ControllerInputManager.Instance.MouseControllerId = ControllerInputManager.eControllerId.NONE;
+
 				GameUtils.m_GameMode = GameUtils.eGameMode.ONE_PLAYER;
 				FlowManager.Instance.TriggerAction("GO_TO_MAIN_GAME");
 			}
 			else if (actionData.ActionName == "CHOOSE_TWO_PLAYER")
 			{
-				ControllerInputManager.Instance.AddMouseController();
-
 				GameUtils.m_GameMode = GameUtils.eGameMode.TWO_PLAYER;
 				FlowManager.Instance.TriggerAction("GO_TO_MAIN_GAME");
 			}

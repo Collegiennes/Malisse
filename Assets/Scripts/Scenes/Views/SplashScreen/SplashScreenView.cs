@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class SplashScreenView : AlisseView 
+public class SplashScreenView : View 
 {
 	#region Members and properties
 	// constants
@@ -29,13 +29,16 @@ public class SplashScreenView : AlisseView
 		AudioManager.Instance.PlayMusic(m_Music);
 	}
 
-	protected override void Update()
+	protected virtual void Update()
 	{
-		base.Update();
-
 		if (m_State != eState.OPENED)
 		{
 			return;
+		}
+
+		if (Input.GetKeyUp(KeyCode.Escape))
+		{
+			Application.Quit();
 		}
 
 		bool success = false;
