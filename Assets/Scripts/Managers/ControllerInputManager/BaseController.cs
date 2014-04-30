@@ -245,6 +245,12 @@ public abstract class BaseController : IController
 	{
 		return invert ? axis * -1.0f : axis;
 	}
+
+	protected bool IsPlatformOSX()
+	{
+		return Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor || 
+			Application.platform == RuntimePlatform.OSXWebPlayer || Application.platform == RuntimePlatform.OSXDashboardPlayer;
+	}
 	#endregion
 	
 	#region Private Functions

@@ -64,24 +64,28 @@ public class PS4Controller : BaseController
 		AddJoystickAxisMap(eAxisId.D_PAD_HORIZONTAL, 7);
 		AddJoystickAxisMap(eAxisId.D_PAD_VERTICAL, 8);
 		
-#if UNITY_STANDALONE_OSX
-		AddJoystickAxisMap(eAxisId.RIGHT_JOYSTICK_VERTICAL, 4);
-		AddJoystickAxisMap(eAxisId.L2, 5);
-		AddJoystickAxisMap(eAxisId.R2, 6);
-#else
-		AddJoystickAxisMap(eAxisId.RIGHT_JOYSTICK_VERTICAL, 6);
-		AddJoystickAxisMap(eAxisId.L2, 4);
-		AddJoystickAxisMap(eAxisId.R2, 5);
-#endif
+		if (IsPlatformOSX())
+		{
+			AddJoystickAxisMap(eAxisId.RIGHT_JOYSTICK_VERTICAL, 4);
+			AddJoystickAxisMap(eAxisId.L2, 5);
+			AddJoystickAxisMap(eAxisId.R2, 6);
+		}
+		else
+		{
+			AddJoystickAxisMap(eAxisId.RIGHT_JOYSTICK_VERTICAL, 6);
+			AddJoystickAxisMap(eAxisId.L2, 4);
+			AddJoystickAxisMap(eAxisId.R2, 5);
+		}
 	}
 	
 	public override Vector2 GetDPad()
 	{
-#if UNITY_STANDALONE_OSX
-		return InvertAxis(base.GetDPad(), false, true);
-#else
+		if (IsPlatformOSX())
+		{
+			return InvertAxis(base.GetDPad(), false, true);
+		}
+
 		return base.GetDPad();
-#endif
 	}
 
 	public override Vector2 GetLeftJoystick()

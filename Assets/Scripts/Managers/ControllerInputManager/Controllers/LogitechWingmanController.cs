@@ -65,11 +65,12 @@ public class LogitechWingmanController : BaseController
 	
 	public override Vector2 GetDPad()
 	{
-#if UNITY_STANDALONE_OSX
-		return InvertAxis(base.GetDPad(), false, true);
-#else
+		if (IsPlatformOSX())
+		{
+			return InvertAxis(base.GetDPad(), false, true);
+		}
+
 		return base.GetDPad();
-#endif
 	}
 
 	public override Vector2 GetLeftJoystick()
