@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MainMenuView : AlisseView 
+public class MainMenuView : View 
 {
 	#region Members and properties
 	// constants
@@ -12,6 +12,9 @@ public class MainMenuView : AlisseView
 	// public
 	public float m_MinDelay = 0.5f;
 	public AudioClip m_Music = null;
+	public ControllerButtonManager m_ControllerButtonManager = null;
+	public ControllerButton m_OnePlayerButton = null;
+	public ControllerButton m_TwoPlayerButton = null;
 	
 	// protected
 	
@@ -29,6 +32,7 @@ public class MainMenuView : AlisseView
 	#region Unity API
 	private void Start()
 	{
+		// Initialize controllers.
 		if (ControllerInputManager.Instance.Keyboard2ControllerId == ControllerInputManager.eControllerId.NONE)
 		{
 			ControllerInputManager.Instance.AddKeyboard2Controller();
@@ -38,16 +42,29 @@ public class MainMenuView : AlisseView
 			ControllerInputManager.Instance.AddMouseController();
 		}
 
+		// Initialize initial selected button.
+		if (GameUtils.m_GameMode == GameUtils.eGameMode.ONE_PLAYER)
+		{
+			m_ControllerButtonManager.SelectNewButton(m_OnePlayerButton);
+		}
+		else if (GameUtils.m_GameMode == GameUtils.eGameMode.TWO_PLAYER)
+		{
+			m_ControllerButtonManager.SelectNewButton(m_TwoPlayerButton);
+		}
+
 		AudioManager.Instance.PlayMusic(m_Music);
 	}
 
-	protected override void Update()
+	protected virtual void Update()
 	{
-		base.Update();
-		
 		if (m_State != eState.OPENED)
 		{
 			return;
+		}
+		
+		if (Input.GetKeyUp(KeyCode.Escape))
+		{
+			Application.Quit();
 		}
 
 		if (m_CurrentCountdown > m_MinDelay)

@@ -51,9 +51,9 @@ public partial class ControllerInputManager
 	#region ControllerInputManager Implementation
 	partial void PostInputDetection()
 	{
-		ControllerInputManager.Instance.AddMouseController();
 		ControllerInputManager.Instance.AddKeyboard1Controller();
 		ControllerInputManager.Instance.AddKeyboard2Controller();
+		ControllerInputManager.Instance.AddMouseController();
 
 		// Aliases.
 		SetAliases();

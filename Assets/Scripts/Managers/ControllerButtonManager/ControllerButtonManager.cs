@@ -70,6 +70,19 @@ public class ControllerButtonManager : Observer
 		m_SelectedButton = null;
 		SelectNewButton();
 	}
+	
+	public void SelectNewButton(ControllerButton button)
+	{
+		if (button != null)
+		{
+			// Clear the button.
+			ClearButtons();
+			
+			// Select the new button.
+			m_SelectedButton = button;
+			m_SelectedButton.ButtonOver();
+		}
+	}
 	#endregion
 
 	#region Observer Implementation
@@ -87,19 +100,6 @@ public class ControllerButtonManager : Observer
 			m_MoveAvailable = false;
 			
 			SelectNewButton(newSelectedButton);
-		}
-	}
-	
-	protected void SelectNewButton(ControllerButton button)
-	{
-		if (button != null)
-		{
-			// Clear the button.
-			ClearButtons();
-			
-			// Select the new button.
-			m_SelectedButton = button;
-			m_SelectedButton.ButtonOver();
 		}
 	}
 	#endregion

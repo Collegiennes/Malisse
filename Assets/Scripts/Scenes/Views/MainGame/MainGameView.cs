@@ -10,7 +10,7 @@ public class HandAssetNames
 	public string m_HandIdleName = "";
 }
 
-public class MainGameView : View 
+public class MainGameView : AlisseView 
 {
 	#region Members and properties
 	// constants
@@ -87,19 +87,6 @@ public class MainGameView : View
 	private void Start()
 	{
 		AudioManager.Instance.PlayMusic(m_Music);
-	}
-
-	protected virtual void Update()
-	{
-		if (m_State != eState.OPENED)
-		{
-			return;
-		}
-		
-		if (Input.GetKeyUp(KeyCode.Escape))
-		{
-			Application.Quit();
-		}
 	}
 	#endregion
 
